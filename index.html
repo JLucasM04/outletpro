@@ -1175,9 +1175,9 @@
             <div class="login-logo">OutletPro</div>
             <div class="login-sub">Acesso restrito ao sistema</div>
             <div class="login-form">
-                <input class="f-in" type="text" id="log-user" placeholder="Usuário (ex: admin, lucas.mendes)"
+                <input class="f-in" type="text" id="log-user" placeholder="Usuário"
                     style="padding:14px;font-size:14px">
-                <input class="f-in" type="password" id="log-pass" placeholder="Senha (ex: 123)"
+                <input class="f-in" type="password" id="log-pass" placeholder="Senha"
                     style="padding:14px;font-size:14px" onkeyup="if(event.key==='Enter') doLogin()">
                 <button class="btn btn-primary"
                     style="justify-content:center;padding:14px;font-size:14px;margin-top:8px"
@@ -1997,9 +1997,6 @@
 </body>
 
 </html>
-=======
-<!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -3492,43 +3489,6 @@
         }
     </style>
 </head>
-
-<body>
-
-    <!-- Removed token-based redirect to allow embedded login form to work -->
-
-    <!-- ===== LOGIN VIEW ===== -->
-    <div class="login-wrapper" id="login-view">
-        <div class="login-card">
-            <div class="login-logo">OutletPro</div>
-            <div class="login-sub">Acesso restrito ao sistema</div>
-            <form novalidate class="login-form">
-                <input class="f-in" type="text" id="log-user" placeholder="Usuário: admin"
-                    style="padding:14px;font-size:14px;border:none;background:#0f0f17;color:#eeeef5" autocomplete="off" required>
-                <input class="f-in" type="password" id="log-pass" placeholder="Senha: 123"
-                    style="padding:14px;font-size:14px;border:none;background:#0f0f17;color:#eeeef5" autocomplete="off" required onkeyup="if(event.key==='Enter') doLogin()">
-                <button type="button" class="btn btn-primary"
-                    style="justify-content:center;padding:14px;font-size:14px;margin-top:8px"
-                    onclick="doLogin()">Entrar</button>
-            </form>
-            <div id="log-err" style="color:var(--danger);font-size:12px;margin-top:14px;display:none;font-weight:600">
-                Usuário ou senha incorretos.</div>
-        </div>
-    </div>
-
-    <!-- ===== ADMIN VIEW (Master do Sistema) ===== -->
-    <div id="admin-view" style="display:none">
-        <div class="admin-header" style="background:#1a1a25;padding:20px;border-bottom:1px solid var(--border);margin-bottom:20px">
-            <div style="display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:auto">
-                <h1 style="margin:0;font-size:24px">🏢 Gerenciar Empresas</h1>
-                <div style="display:flex;gap:10px">
-                    <button class="btn btn-primary" onclick="showNewCompanyForm()" style="padding:8px 16px;font-size:14px">+ Nova Empresa</button>
-                    <button class="btn" onclick="doLogout()" style="padding:8px 16px;font-size:14px">Sair</button>
-                </div>
-            </div>
-        </div>
-        
-        <div style="max-width:1200px;margin:auto;padding:20px">
             <div id="companies-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
                 <!-- Empresas serão carregadas aqui -->
             </div>
@@ -5149,4 +5109,3 @@
 </body>
 
 </html>
->>>>>>> b5c3da0 (Neutralize demo passwords; add .gitignore and README updates)

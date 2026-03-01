@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutletPro — Painel Master</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="dark"] { --bg:#09090e; --card:#111119; --text:#eeeef5; --text2:#7777aa; --border:rgba(255,255,255,0.07); --accent:#7c6dff; --ok:#00d4aa; --danger:#ff5272; }
+        :root[data-theme="light"] { --bg:#f2f2f8; --card:#ffffff; --text:#18182e; --text2:#666688; --border:rgba(0,0,0,0.07); --accent:#5a4de0; --ok:#00a882; --danger:#d42848; }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; transition:background .3s,color .3s; }
+        input, select, button { font-family:inherit; }
+        .login-wrapper { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--bg); z-index:1000; }
+        .login-card { background:var(--card); padding:40px; border-radius:20px; width:100%; max-width:450px; border:1px solid var(--border); box-shadow:0 8px 40px rgba(0,0,0,.5); text-align:center; }
+        .login-logo { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; background:linear-gradient(135deg,var(--accent),#ff6b9d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
+        .login-sub { font-size:13px; color:var(--text2); margin-bottom:30px; }
+        .login-form { display:flex; flex-direction:column; gap:16px; }
+        input { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:12px 14px; font-size:13px; color:var(--text); outline:none; transition:border-color .18s; width:100%; }
+        input:focus { border-color:var(--accent); }
+        input::placeholder { color:var(--text2); }
+        button { background:linear-gradient(135deg,var(--accent),#9d6dff); color:#fff; border:none; border-radius:9px; padding:12px; font-weight:600; cursor:pointer; transition:all .18s; width:100%; }
+        button:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,109,255,.45); }
+        .error { color:var(--danger); font-size:12px; margin-top:14px; display:none; font-weight:600; }
+        .content { display:none; }
+        .content.active { display:block; }
+        .container { max-width:1200px; margin:0 auto; padding:20px; }
+        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
+        .header h1 { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; }
+        .btn-logout { background:var(--danger); padding:8px 16px; color:#fff; border-radius:8px; cursor:pointer; font-size:12px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; margin-top:20px; }
+        .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; }
+        .card-title { font-weight:700; margin-bottom:14px; }
+        .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+        .form-group label { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:.4px; }
+        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:300; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
+        .modal.open { display:flex; animation:fadein .2s ease; }
+        .modal-content { background:var(--card); border:1px solid var(--border); border-radius:20px; width:540px; max-width:95vw; max-height:90vh; overflow-y:auto; padding:30px; }
+        .modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px; }
+        .modal-footer { display:flex; gap:9px; justify-content:flex-end; margin-top:20px; }
+        .btn-secondary { background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 16px; border-radius:8px; cursor:pointer; }
+        @keyframes fadein { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrapper" id="login-view">
+    <div class="login-card">
+        <div class="login-logo">OutletPro</div>
+        <div class="login-sub">Acesso Master - Proprietário</div>
+        <div class="login-form">
+            <input type="text" id="master-user" placeholder="Usuário Master">
+            <input type="password" id="master-pass" placeholder="Senha" onkeyup="if(event.key==='Enter') masterLogin()">
+            <button onclick="masterLogin()">Entrar</button>
+        </div>
+        <div class="error" id="login-error">Usuário ou senha incorretos</div>
+    </div>
+</div>
+
+<!-- PAINEL MASTER -->
+<div class="content" id="master-view">
+    <div class="container">
+        <div class="header">
+            <h1>Painel Master - Proprietário</h1>
+            <button class="btn-logout" onclick="masterLogout()">Sair</button>
+        </div>
+
+        <!-- Empresas -->
+        <div class="card">
+            <div class="card-title">Gerenciar Empresas</div>
+            <button onclick="openNewCompanyModal()" style="margin-bottom:14px; padding:8px 16px; border-radius:8px; background:var(--accent); color:#fff; border:none; cursor:pointer;">+ Criar Empresa</button>
+            <div id="companies-list"></div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: CRIAR/EDITAR EMPRESA -->
+<div class="modal" id="company-modal">
+    <div class="modal-content">
+        <div class="modal-title">Criar Empresa</div>
+        <div class="form-group">
+            <label>Nome da Empresa</label>
+            <input type="text" id="company-name">
+        </div>
+        <div class="form-group">
+            <label>Domínio (ex: minha-empresa)</label>
+            <input type="text" id="company-domain">
+        </div>
+        <div class="form-group">
+            <label>E-mail Administrador</label>
+            <input type="email" id="company-admin-email">
+        </div>
+        <div class="form-group">
+            <label>Vigência do Contrato (meses)</label>
+            <input type="number" id="company-contract-duration" value="12" min="1">
+        </div>
+        <div class="form-group">
+            <label>Status do Contrato</label>
+            <select id="company-contract-status" style="padding:9px 12px; border:1px solid var(--border); border-radius:9px; background:var(--card); color:var(--text);">
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Expirado">Expirado</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Módulos Disponíveis (separados por vírgula)</label>
+            <textarea id="company-modules" style="padding:9px 12px; border:1px solid var(--border); border-radius:9px; background:var(--card); color:var(--text); font-family:inherit; min-height:60px;">Dashboard,Vendas,Produtos,Estoque,Relatórios</textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" onclick="closeCompanyModal()">Cancelar</button>
+            <button onclick="saveCompany()" style="background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const MASTER_USER = 'master';
+    const MASTER_PASS = '123';
+    let masterCurrentUser = null;
+    let companies = JSON.parse(localStorage.getItem('op_companies')) || [];
+
+    function masterLogin() {
+        const user = document.getElementById('master-user').value.trim();
+        const pass = document.getElementById('master-pass').value.trim();
+        const error = document.getElementById('login-error');
+
+        if (user === MASTER_USER && pass === MASTER_PASS) {
+            masterCurrentUser = { user: MASTER_USER, role: 'master' };
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('master-view').classList.add('active');
+            renderCompanies();
+        } else {
+            error.style.display = 'block';
+        }
+    }
+
+    function masterLogout() {
+        masterCurrentUser = null;
+        document.getElementById('master-view').classList.remove('active');
+        document.getElementById('login-view').style.display = 'flex';
+        document.getElementById('master-user').value = '';
+        document.getElementById('master-pass').value = '';
+        document.getElementById('login-error').style.display = 'none';
+    }
+
+    function renderCompanies() {
+        const list = document.getElementById('companies-list');
+        if (companies.length === 0) {
+            list.innerHTML = '<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
+            return;
+        }
+
+        let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
+        html += '<thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">EMPRESA</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">DOMÍNIO</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">CONTRATO</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">STATUS</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">AÇÕES</th></tr></thead><tbody>';
+
+        companies.forEach(comp => {
+            const status = comp.contractStatus === 'Ativo' ? '<span style="color:var(--ok)">✓ Ativo</span>' : 
+                          comp.contractStatus === 'Expirado' ? '<span style="color:var(--danger)">✗ Expirado</span>' : 
+                          '<span style="color:var(--text2)">○ Inativo</span>';
+            html += `<tr style="border-bottom:1px solid var(--border)">
+                <td style="padding:10px"><strong>${comp.name}</strong></td>
+                <td style="padding:10px;font-size:12px;color:var(--text2)">${comp.domain}</td>
+                <td style="padding:10px;font-size:12px">${comp.contractDuration} meses (até ${new Date(new Date(comp.createdAt).getTime() + comp.contractDuration * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()})</td>
+                <td style="padding:10px">${status}</td>
+                <td style="padding:10px">
+                    <button onclick="editCompany(${comp.id})" style="padding:4px 8px;margin-right:5px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Editar</button>
+                    <button onclick="deleteCompany(${comp.id})" style="padding:4px 8px;background:var(--danger);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Remover</button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table></div>';
+        list.innerHTML = html;
+    }
+
+    function openNewCompanyModal() {
+        document.getElementById('company-name').value = '';
+        document.getElementById('company-domain').value = '';
+        document.getElementById('company-admin-email').value = '';
+        document.getElementById('company-contract-duration').value = '12';
+        document.getElementById('company-contract-status').value = 'Ativo';
+        document.getElementById('company-modules').value = 'Dashboard,Vendas,Produtos,Estoque,Relatórios';
+        document.getElementById('company-modal').classList.add('open');
+    }
+
+    function closeCompanyModal() {
+        document.getElementById('company-modal').classList.remove('open');
+    }
+
+    function saveCompany() {
+        const name = document.getElementById('company-name').value.trim();
+        const domain = document.getElementById('company-domain').value.trim().toLowerCase().replace(/\s+/g, '-');
+        const adminEmail = document.getElementById('company-admin-email').value.trim();
+        const duration = parseInt(document.getElementById('company-contract-duration').value) || 12;
+        const status = document.getElementById('company-contract-status').value;
+        const modules = document.getElementById('company-modules').value.split(',').map(m => m.trim()).filter(m => m);
+
+        if (!name || !domain || !adminEmail) {
+            alert('Preencha todos os campos obrigatórios!');
+            return;
+        }
+
+        const newCompany = {
+            id: Date.now(),
+            name,
+            domain,
+            adminEmail,
+            contractDuration: duration,
+            contractStatus: status,
+            modules,
+            createdAt: new Date().toISOString(),
+            users: []
+        };
+
+        companies.push(newCompany);
+        localStorage.setItem('op_companies', JSON.stringify(companies));
+        renderCompanies();
+        closeCompanyModal();
+        alert('✅ Empresa criada com sucesso!');
+    }
+
+    function editCompany(id) {
+        alert('Funcionalidade de edição em desenvolvimento');
+    }
+
+    function deleteCompany(id) {
+        if (confirm('Tem certeza que deseja remover esta empresa?')) {
+            companies = companies.filter(c => c.id !== id);
+            localStorage.setItem('op_companies', JSON.stringify(companies));
+            renderCompanies();
+            alert('✅ Empresa removida');
+        }
+    }
+
+    // Verifica se há login ao carregar
+    window.addEventListener('DOMContentLoaded', () => {
+        const user = sessionStorage.getItem('masterUser');
+        if (user) {
+            masterCurrentUser = JSON.parse(user);
+            document.getElementById('login-view').style.display = 'none';
+            document.getElementById('master-view').classList.add('active');
+            renderCompanies();
+        }
+    });
+</script>
+
+</body>
+</html>
