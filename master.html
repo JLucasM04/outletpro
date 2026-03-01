@@ -321,9 +321,13 @@
         }
         var html='';
         companies.forEach(function(c){
-            html += '<div style="padding:8px;border-bottom:1px solid var(--border)">'
+            var vig = '';
+            if (c.contractStart && c.contractEnd) {
+                vig = 'Vigência: ' + new Date(c.contractStart).toLocaleDateString() + ' – ' + new Date(c.contractEnd).toLocaleDateString() + '<br>';
+            }
+            html += '<div style="padding:8px;border-bottom:1px solid var(--border)>'
                   +'<strong>'+escapeHtml(c.name)+'</strong><br>'
-                  +'Duração: '+c.contractDuration+' meses<br>'
+                  +vig
                   +'Status: '+c.contractStatus+'<br>'
                   +'Módulos: '+escapeHtml((c.modules||[]).join(', '))
                   +'</div>';
