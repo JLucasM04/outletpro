@@ -101,8 +101,16 @@
     <div class="modal-content">
         <div class="modal-title">Criar Empresa</div>
         <div class="form-group">
-            <label>Nome da Empresa</label>
+            <label>Razão Social</label>
+            <input type="text" id="company-legal-name">
+        </div>
+        <div class="form-group">
+            <label>Nome Fantasia</label>
             <input type="text" id="company-name">
+        </div>
+        <div class="form-group">
+            <label>CNPJ</label>
+            <input type="text" id="company-cnpj">
         </div>
         <div class="form-group">
             <label>Domínio (ex: minha-empresa)</label>
@@ -113,8 +121,12 @@
             <input type="email" id="company-admin-email">
         </div>
         <div class="form-group">
-            <label>Vigência do Contrato (meses)</label>
-            <input type="number" id="company-contract-duration" value="12" min="1">
+            <label>Início da Vigência</label>
+            <input type="date" id="company-contract-start">
+        </div>
+        <div class="form-group">
+            <label>Fim da Vigência</label>
+            <input type="date" id="company-contract-end">
         </div>
         <div class="form-group">
             <label>Status do Contrato</label>
@@ -125,8 +137,14 @@
             </select>
         </div>
         <div class="form-group">
-            <label>Módulos Disponíveis (separados por vírgula)</label>
-            <textarea id="company-modules" style="padding:9px 12px; border:1px solid var(--border); border-radius:9px; background:var(--card); color:var(--text); font-family:inherit; min-height:60px;">Dashboard,Vendas,Produtos,Estoque,Relatórios</textarea>
+            <label>Módulos</label>
+            <div id="module-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;">
+                <label><input type="checkbox" class="module-checkbox" value="Dashboard"> Dashboard</label>
+                <label><input type="checkbox" class="module-checkbox" value="Vendas"> Vendas</label>
+                <label><input type="checkbox" class="module-checkbox" value="Produtos"> Produtos</label>
+                <label><input type="checkbox" class="module-checkbox" value="Estoque"> Estoque</label>
+                <label><input type="checkbox" class="module-checkbox" value="Relatórios"> Relatórios</label>
+            </div>
         </div>
         <div class="modal-footer">
             <button class="btn-secondary" onclick="closeCompanyModal()">Cancelar</button>
@@ -173,9 +191,9 @@
         }
 
         let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
-        html += '<thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">EMPRESA</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">DOMÍNIO</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">CONTRATO</th>';
+        html += '<thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">RAZÃO / NOME</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">CNPJ</th>';
+        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">VIGÊNCIA</th>';
         html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">STATUS</th>';
         html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">AÇÕES</th></tr></thead><tbody>';
 
@@ -183,10 +201,11 @@
             const status = comp.contractStatus === 'Ativo' ? '<span style="color:var(--ok)">✓ Ativo</span>' : 
                           comp.contractStatus === 'Expirado' ? '<span style="color:var(--danger)">✗ Expirado</span>' : 
                           '<span style="color:var(--text2)">○ Inativo</span>';
+            const range = comp.contractStart && comp.contractEnd ? `${new Date(comp.contractStart).toLocaleDateString()} – ${new Date(comp.contractEnd).toLocaleDateString()}` : '';
             html += `<tr style="border-bottom:1px solid var(--border)">
-                <td style="padding:10px"><strong>${comp.name}</strong></td>
-                <td style="padding:10px;font-size:12px;color:var(--text2)">${comp.domain}</td>
-                <td style="padding:10px;font-size:12px">${comp.contractDuration} meses (até ${new Date(new Date(comp.createdAt).getTime() + comp.contractDuration * 30 * 24 * 60 * 60 * 1000).toLocaleDateString()})</td>
+                <td style="padding:10px"><strong>${comp.legalName||comp.name}</strong><br><small>${comp.name||''}</small></td>
+                <td style="padding:10px;font-size:12px;color:var(--text2)">${comp.cnpj||''}</td>
+                <td style="padding:10px;font-size:12px">${range}</td>
                 <td style="padding:10px">${status}</td>
                 <td style="padding:10px">
                     <button onclick="editCompany(${comp.id})" style="padding:4px 8px;margin-right:5px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Editar</button>
@@ -199,12 +218,16 @@
     }
 
     function openNewCompanyModal() {
+        document.getElementById('company-legal-name').value = '';
         document.getElementById('company-name').value = '';
+        document.getElementById('company-cnpj').value = '';
         document.getElementById('company-domain').value = '';
         document.getElementById('company-admin-email').value = '';
-        document.getElementById('company-contract-duration').value = '12';
+        document.getElementById('company-contract-start').value = '';
+        document.getElementById('company-contract-end').value = '';
         document.getElementById('company-contract-status').value = 'Ativo';
-        document.getElementById('company-modules').value = 'Dashboard,Vendas,Produtos,Estoque,Relatórios';
+        // reset module checkboxes
+        document.querySelectorAll('.module-checkbox').forEach(cb=>cb.checked=false);
         document.getElementById('company-modal').classList.add('open');
     }
 
@@ -213,24 +236,36 @@
     }
 
     function saveCompany() {
+        const legalName = document.getElementById('company-legal-name').value.trim();
         const name = document.getElementById('company-name').value.trim();
+        const cnpj = document.getElementById('company-cnpj').value.trim();
         const domain = document.getElementById('company-domain').value.trim().toLowerCase().replace(/\s+/g, '-');
         const adminEmail = document.getElementById('company-admin-email').value.trim();
-        const duration = parseInt(document.getElementById('company-contract-duration').value) || 12;
+        const start = document.getElementById('company-contract-start').value;
+        const end = document.getElementById('company-contract-end').value;
         const status = document.getElementById('company-contract-status').value;
-        const modules = document.getElementById('company-modules').value.split(',').map(m => m.trim()).filter(m => m);
+        const modules = Array.from(document.querySelectorAll('.module-checkbox:checked')).map(cb=>cb.value);
 
-        if (!name || !domain || !adminEmail) {
+        if (!legalName || !name || !cnpj || !domain || !adminEmail || !start || !end) {
             alert('Preencha todos os campos obrigatórios!');
+            return;
+        }
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        if (endDate <= startDate) {
+            alert('Data final deve ser posterior à data inicial');
             return;
         }
 
         const newCompany = {
             id: Date.now(),
+            legalName,
             name,
+            cnpj,
             domain,
             adminEmail,
-            contractDuration: duration,
+            contractStart: start,
+            contractEnd: end,
             contractStatus: status,
             modules,
             createdAt: new Date().toISOString(),
