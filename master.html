@@ -66,11 +66,32 @@
             <button class="btn-logout" onclick="masterLogout()">Sair</button>
         </div>
 
-        <!-- Empresas -->
-        <div class="card">
-            <div class="card-title">Gerenciar Empresas</div>
-            <button onclick="openNewCompanyModal()" style="margin-bottom:14px; padding:8px 16px; border-radius:8px; background:var(--accent); color:#fff; border:none; cursor:pointer;">+ Criar Empresa</button>
-            <div id="companies-list"></div>
+        <!-- Aba de navegação -->
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+            <button class="btn btn-secondary" id="tab-btn-clients" onclick="showMasterTab('clients')">Clientes</button>
+            <button class="btn btn-secondary" id="tab-btn-contracts" onclick="showMasterTab('contracts')">Contratos</button>
+            <button class="btn btn-secondary" id="tab-btn-users" onclick="showMasterTab('users')">Usuários</button>
+        </div>
+
+        <!-- Conteúdo das abas -->
+        <div id="tab-clients" class="tab-content">
+            <div class="card">
+                <div class="card-title">Gerenciar Empresas</div>
+                <button onclick="openNewCompanyModal()" style="margin-bottom:14px; padding:8px 16px; border-radius:8px; background:var(--accent); color:#fff; border:none; cursor:pointer;">+ Criar Empresa</button>
+                <div id="companies-list"></div>
+            </div>
+        </div>
+        <div id="tab-contracts" class="tab-content" style="display:none">
+            <div class="card">
+                <div class="card-title">Contratos</div>
+                <div id="contracts-list" style="padding:0 16px;"></div>
+            </div>
+        </div>
+        <div id="tab-users" class="tab-content" style="display:none">
+            <div class="card">
+                <div class="card-title">Usuários</div>
+                <div id="users-global-list" style="padding:0 16px;"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -235,6 +256,96 @@
             alert('✅ Empresa removida');
         }
     }
+
+    // --- abas e utilitários adicionais ---
+    function showMasterTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+        document.querySelectorAll('#tab-btn-clients,#tab-btn-contracts,#tab-btn-users').forEach(b=>b.classList.remove('active'));
+        if (tab==='clients') {
+            document.getElementById('tab-clients').style.display='block';
+            document.getElementById('tab-btn-clients').classList.add('active');
+        }
+        if (tab==='contracts') {
+            document.getElementById('tab-contracts').style.display='block';
+            document.getElementById('tab-btn-contracts').classList.add('active');
+            renderContracts();
+        }
+        if (tab==='users') {
+            document.getElementById('tab-users').style.display='block';
+            document.getElementById('tab-btn-users').classList.add('active');
+            renderUsers();
+        }
+    }
+
+    function renderContracts() {
+        var cont = document.getElementById('contracts-list');
+        if (!cont) return;
+        if (companies.length===0) {
+            cont.innerHTML='<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
+            return;
+        }
+        var html='';
+        companies.forEach(function(c){
+            html += '<div style="padding:8px;border-bottom:1px solid var(--border)">'
+                  +'<strong>'+escapeHtml(c.name)+'</strong><br>'
+                  +'Duração: '+c.contractDuration+' meses<br>'
+                  +'Status: '+c.contractStatus+'<br>'
+                  +'Módulos: '+escapeHtml((c.modules||[]).join(', '))
+                  +'</div>';
+        });
+        cont.innerHTML = html;
+    }
+
+    function renderUsers() {
+        var cont = document.getElementById('users-global-list');
+        if (!cont) return;
+        if (companies.length===0) {
+            cont.innerHTML='<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
+            return;
+        }
+        var html = '<div style="margin-bottom:12px">Selecione a empresa:</div>';
+        html += '<select id="user-company-select" style="padding:8px;border:1px solid var(--border);border-radius:6px">';
+        companies.forEach(function(c){ html += '<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>'; });
+        html += '</select> <button class="btn btn-primary" style="margin-left:8px;" onclick="openCompanyUsers()">Gerenciar</button>';
+        cont.innerHTML = html + '<div id="company-users-area" style="margin-top:16px"></div>';
+    }
+
+    function openCompanyUsers() {
+        var sel = document.getElementById('user-company-select');
+        if (!sel) return;
+        var id = parseInt(sel.value);
+        var company = companies.find(c=>c.id===id);
+        var area = document.getElementById('company-users-area');
+        if (!company) return;
+        if (!company.users) company.users = [];
+        var html = '<div style="margin-bottom:8px"><button class="btn btn-primary" onclick="showNewUserForm('+id+')">+ Novo Usuário</button></div>';
+        if (company.users.length===0) {
+            html += '<p style="color:var(--text2)">Nenhum usuário cadastrado</p>';
+        } else {
+            html += '<ul>';
+            company.users.forEach(function(u){
+                html += '<li>'+escapeHtml(u.nome)+' ('+escapeHtml(u.login)+')</li>';
+            });
+            html += '</ul>';
+        }
+        area.innerHTML = html;
+    }
+
+    function showNewUserForm(companyId) {
+        var name = prompt('Nome do usuário:');
+        var login = prompt('Login:');
+        var pass = prompt('Senha:');
+        if (name && login && pass) {
+            var comp = companies.find(c=>c.id===companyId);
+            if (!comp.users) comp.users = [];
+            comp.users.push({nome:name,login:login,senha:pass});
+            localStorage.setItem('op_companies',JSON.stringify(companies));
+            openCompanyUsers();
+        }
+    }
+
+    // exibir aba inicial
+    showMasterTab('clients');
 
     // Verifica se há login ao carregar
     window.addEventListener('DOMContentLoaded', () => {
