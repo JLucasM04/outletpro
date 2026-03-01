@@ -1,0 +1,136 @@
+╔═════════════════════════════════════════════════════╗
+║  GUIA DE LOGIN - OutletPro                         ║
+╚═════════════════════════════════════════════════════╝
+
+❌ NÃO CONSIGO FAZER LOGIN?
+═════════════════════════════════════════════════════
+
+Siga estes passos:
+
+PASSO 1️⃣: Teste Rápido
+─────────────────────────
+
+1. Abra: login-test.html
+2. Digite:
+   Usuário: admin
+   Senha: 123
+3. Clique em "Entrar"
+
+Se funcionar aqui → é problema com index.html
+Se não funcionar → é problema com dados
+
+PASSO 2️⃣: Verificar Dados
+─────────────────────────
+
+1. Abra: login-test.html
+2. Clique no botão "🔍 Verificar Dados"
+3. Procure por "Sellers carregados"
+4. Deve aparecer: user: "admin", senha: "123"
+
+Se aparecer [] ou vazio → dados não carregaram
+
+PASSO 3️⃣: Resetar Dados
+─────────────────────────
+
+Se os dados estão errados ou corrompidos:
+
+1. Abra o navegador (qualquer abra)
+2. Pressione F12 (DevTools)
+3. Vá para "Storage" ou "Armazenamento"
+4. Procure por "Local Storage"
+5. Delete os itens:
+   ✗ op_sellers
+   ✗ op_produtos
+   ✗ op_vendas
+6. Recarregue a página (F5)
+7. Tente fazer login novamente com: admin / 123
+
+═════════════════════════════════════════════════════
+
+✅ VERIFICAR SE O LOGIN FUNCIONA
+═════════════════════════════════════════════════════
+
+1. Abra index.html
+2. Na tela de login, pressione F12
+3. Vá para aba "Console"
+4. Digite o usuário ao senha
+5. Procure por mensagens [LOGIN]:
+   
+   ✓ Deve aparecer: "[LOGIN] Tentativa: { user: 'admin', pass: '123' }"
+   ✓ Deve aparecer: "[LOGIN] Sucesso: Administrador Geral"
+   
+   Se aparecer "❌ Usuário ou senha incorretos":
+   → Tente Passo 2 e 3 acima
+
+═════════════════════════════════════════════════════
+
+🆘 ERROS COMUNS
+═════════════════════════════════════════════════════
+
+"Usuário ou senha incorretos" mas coloquei admin/123
+→ Dados estão vazios ou corrompidos
+→ Solução: Siga PASSO 3 (Resetar Dados)
+
+Clico em entrar e nada acontece
+→ Console no F12 não mostra [LOGIN]
+→ Solução: Verifique se o botão está clicável (não desabilitado)
+
+Login funciona mas não entra no dashboard
+→ Aparece "Bem-vindo" mas desktop não abre
+→ Solução: Pressione F5 para recarregar
+
+═════════════════════════════════════════════════════
+
+💡 CRIANDO NOVO USUÁRIO
+═════════════════════════════════════════════════════
+
+Se quer criar outro usuário além de admin/123:
+
+1. Faça login com: admin / 123
+2. Vá para aba: "Administração"
+3. Clique em: "Novo Vendedor"
+4. Preencha:
+   - Nome: seu nome
+   - Usuário: seu_usuario (sem espaços)
+   - Senha: sua_senha
+5. Clique em: "Salvar Vendedor"
+
+6. Faça logout (botão de sair)
+7. Faça login com o novo usuário criado
+
+═════════════════════════════════════════════════════
+
+🖥️ USANDO CONSOLE PARA DEBUGAR
+═════════════════════════════════════════════════════
+
+Se quiser verificar os dados no console (F12):
+
+1. Abra F12 → Console
+2. Digite: sellers
+3. Vácio [] ou preenchido []
+4. Digite: sellers[0]
+5. Debe aparecer o objeto com admin
+
+Se sellers estiver [], faça Passo 3 (Resetar Dados)
+
+═════════════════════════════════════════════════════
+
+⚠️ ÚLTIMA SOLUÇÃO: Limpar Tudo
+═════════════════════════════════════════════════════
+
+Se nada funcionou:
+
+1. F12 → Storage → LocalStorage
+2. Delete TUDO (todos os itens)
+3. Feche o navegador completamente
+4. Abra novamente
+5. Acesse login-test.html
+6. Clique em "Verificar Dados"
+7. Novo teste de login com admin/123
+
+═════════════════════════════════════════════════════
+
+Dúvidas? Verifique o console (F12) para mensagens
+de erro!
+
+═════════════════════════════════════════════════════

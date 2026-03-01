@@ -1,0 +1,33 @@
+# Node / common
+node_modules/
+.env
+.env.local
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.DS_Store
+Thumbs.db
+.vscode/
+
+# OS
+desktop.ini
+
+# Logs
+*.log
+
+# IDE
+.idea/
+
+# Build outputs
+dist/
+build/
+
+# Secrets (example)
+*.pem
+*.key
+
+# Local test files
+*.sqlite
+
+# Ignore any data exports you don't want in repo
+export-*.json

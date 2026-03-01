@@ -1,0 +1,162 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║              GUIA DE TROUBLESHOOTING - LOGIN OUTLETPRO                 ║
+║                          v2.0 - Corrigido                              ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+🔴 PROBLEMA: "Não consigo fazer login"
+═══════════════════════════════════════════════════════════════════════════
+
+✅ SOLUÇÃO RÁPIDA (3 passos)
+═══════════════════════════════════════════════════════════════════════════
+
+PASSO 1: Abra a página de diagnóstico
+   → Abra login-diag.html no navegador
+   → Ela roda automaticamente ao carregar
+   → Procure por erros em vermelho (🔍 Diagnosticar Sistema)
+
+PASSO 2: Se vir "admin/123 NÃO encontrado"
+   → Clique no botão 🗑️ Limpar localStorage
+   → Depois tente fazer login novamente
+
+PASSO 3: Teste o login na página de diagnóstico
+   → Digite: admin
+   → Senha: 123
+   → Clique "Testar Login"
+   → Você vai ver exatamente o que está acontecendo
+
+═══════════════════════════════════════════════════════════════════════════
+
+🔧 O QUE MUDOU (Correção implementada)
+═══════════════════════════════════════════════════════════════════════════
+
+PROBLEMA ANTERIOR:
+  • A função sanitize() escapava caracteres HTML ANTES de validar login
+  • Isso quebrava a comparação (admin se tornava admin)
+  • Resultado: sempre "acesso negado"
+
+SOLUÇÃO APLICADA:
+  ✓ Separação de responsabilidades:
+    - trimInput() = apenas remove espaços (para validação)
+    - escapeHtml() = apenas para renderizar em HTML (segurança XSS)
+    - sanitize() = trim + escape (apenas ao SALVAR dados)
+  
+  ✓ Novo fluxo de login:
+    1. trimInput(input) → remove espaços, sem escape
+    2. Comparar com sellers array
+    3. Se OK → renderizar normalmente
+
+═══════════════════════════════════════════════════════════════════════════
+
+😞 AINDA NAO FUNCIONA? Siga este checklist
+═══════════════════════════════════════════════════════════════════════════
+
+☐ 1. localStorage está HABILITADO?
+    Abra DevTools (F12) → Console
+    Digite: localStorage.setItem('test', 'test')
+    Se der erro, seu navegador não permite localStorage
+    
+    SOLUÇÃO:
+    • Saia do modo Privado/Incógnito
+    • Ou mude de navegador (Chrome, Firefox, Edge)
+
+☐ 2. Os dados padrão estão corrompidos?
+    Abra DevTools (F12) → Console
+    Digite: JSON.parse(localStorage.getItem('op_sellers'))
+    
+    ESPERADO: Array com um objeto contendo user: 'admin', senha: '123'
+    
+    SE FOR NULL ou erro:
+    • Clique 🗑️ Limpar localStorage em login-diag.html
+    • Recargue a página
+
+☐ 3. Você tem certeza que é admin/123?
+    Em login-diag.html:
+    • Clique "🔍 Diagnosticar Sistema"
+    • Procure por "admin/123 encontrado"
+    
+    Se NÃO estiver lá, use o botão limpar
+
+☐ 4. Há caracteres especiais digitados?
+    Tente copiar-colar:
+    • Usuário: admin
+    • Senha: 123
+    (Às vezes espaços extras quebram o login)
+
+☐ 5. Abra o Console do navegador (F12)
+    Colinha os erros que aparecem aqui e me mostre
+    (Pode ter pistas sobre o problema)
+
+═══════════════════════════════════════════════════════════════════════════
+
+📊 COMO USAR login-diag.html (Página de Teste)
+═══════════════════════════════════════════════════════════════════════════
+
+1. DIAGNOSTICAR SISTEMA
+   • Clique "🔍 Diagnosticar Sistema"
+   • Mostra estado do localStorage
+   • Mostra se admin/123 existe
+   • Se houver problema, aparece em vermelho
+
+2. TESTAR LOGIN MANUALMENTE
+   • Digite usuário: admin
+   • Digite senha: 123
+   • Clique "Testar Login"
+   • Você vê cada passo da validação
+   • Se falhar, mostra o motivo
+
+3. TESTAR FUNÇÕES INTERNAS
+   • Clique "🧪 Testar Funções"
+   • Valida se trimInput() e comparações funcionam
+
+4. LIMPAR DADOS
+   • Clique "🗑️ Limpar localStorage"
+   • Reseta tudo (cuidado!)
+   • Restaura dados padrão
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎓 ENTENDENDO A SEGURANÇA
+═══════════════════════════════════════════════════════════════════════════
+
+Antes (QUEBRADO):
+  1. Usuario digita: admin
+  2. sanitize() → escapeHtml() → escapa caracteres
+  3. Tenta comparar "admin" com "admin" armazenado
+  ❌ Falha se houver caracteres especiais
+
+Agora (CORRETO):
+  1. Usuario digita: admin
+  2. trimInput() → apenas remove espaços
+  3. Compara "admin" === "admin" (seguro)
+  4. Se OK, só ENTÃO sanitiza ao renderizar
+  ✅ Seguro E funciona
+
+═══════════════════════════════════════════════════════════════════════════
+
+🆘 ÚLTIMO RECURSO - Reset Total
+═══════════════════════════════════════════════════════════════════════════
+
+Se nada funcionar:
+
+PASSO 1: Abra DevTools (F12) → Console
+PASSO 2: Cole isso:
+   localStorage.clear();
+   location.reload();
+
+PASSO 3: Recarregue index.html
+PASSO 4: Tente login com admin/123
+
+═══════════════════════════════════════════════════════════════════════════
+
+📞 INFORMAÇÕES PARA DEBUG
+═══════════════════════════════════════════════════════════════════════════
+
+Se continuar com erro, me mostre:
+1. Print da página login-diag.html com os erros
+2. O que aparece no Console (F12)
+3. Qual é a mensagem exata de erro
+4. Seu navegador (Chrome? Firefox? Edge?)
+
+Com isso consigo identificar rapidamente!
+
+═══════════════════════════════════════════════════════════════════════════

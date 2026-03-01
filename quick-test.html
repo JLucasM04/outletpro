@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutletPro - Quick Test</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial; background: #09090e; color: #eeeef5; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        h1 { margin: 20px 0; }
+        .test-box { background: #111119; border: 1px solid #444; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #7c6dff; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; margin: 5px 5px 5px 0; }
+        button:hover { background: #5a4de0; }
+        .success { color: #00d4aa; }
+        .error { color: #ff6b9d; }
+        input { padding: 8px; background: #191924; border: 1px solid #444; color: #eeeef5; border-radius: 4px; margin: 5px 0; }
+        pre { background: #000; padding: 10px; border-radius: 4px; margin-top: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 OutletPro - Teste Rápido</h1>
+        
+        <div class="test-box">
+            <h2>1. Estado Atual</h2>
+            <p id="status"></p>
+        </div>
+
+        <div class="test-box">
+            <h2>2. Teste de Login Local</h2>
+            <input id="user" placeholder="Usuário" value="admin">
+            <input id="pass" placeholder="Senha" type="password" value="">
+            <button onclick="testLogin()">Testar Login</button>
+            <p id="loginResult"></p>
+        </div>
+
+        <div class="test-box">
+            <h2>3. Dados LocalStorage</h2>
+            <button onclick="showData()">Mostrar Dados</button>
+            <pre id="dataDisplay"></pre>
+        </div>
+
+        <div class="test-box">
+            <h2>4. Carregar index.html</h2>
+            <button onclick="openIndex()">Abrir Dashboard</button>
+            <button onclick="testServer()">Testar Servidor</button>
+            <p id="serverResult"></p>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus() {
+            const has_admin = localStorage.getItem('op_sellers');
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <span class="success">✓</span> LocalStorage disponível<br>
+                ${has_admin ? '<span class="success">✓</span> Dados encontrados' : '<span class="error">✗</span> Nenhum dado salvo ainda'}<br>
+                <strong>Credencial padrão:</strong> admin / (demo)
+            `;
+        }
+
+        function testLogin() {
+            const user = document.getElementById('user').value;
+            const pass = document.getElementById('pass').value;
+            
+            let sellers = JSON.parse(localStorage.getItem('op_sellers')) || [
+                { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '', email: 'admin@outletpro.com', status: 'Ativo' }
+            ];
+            
+            const found = sellers.find(s => s.user === user && s.senha === pass);
+            const result = document.getElementById('loginResult');
+            
+            if (found) {
+                result.innerHTML = `<span class="success">✓ Login válido!</span><br>Usuário: ${found.nome}<br>Email: ${found.email}`;
+                localStorage.setItem('token', 'fake-token-' + Date.now());
+            } else {
+                result.innerHTML = `<span class="error">✗ Login inválido</span>`;
+            }
+        }
+
+        function showData() {
+            const data = {
+                sellers: JSON.parse(localStorage.getItem('op_sellers')),
+                produtos: JSON.parse(localStorage.getItem('op_produtos')),
+                vendas: JSON.parse(localStorage.getItem('op_vendas'))
+            };
+            document.getElementById('dataDisplay').textContent = JSON.stringify(data, null, 2) || '(vazio)';
+        }
+
+        function openIndex() {
+            window.open('index.html', '_blank');
+        }
+
+        function testServer() {
+            const result = document.getElementById('serverResult');
+            result.innerHTML = '⏳ Testando...';
+            
+            Promise.race([
+                fetch('/api/config').then(r => r.ok),
+                new Promise((_, reject) => setTimeout(() => reject('timeout'), 3000))
+            ]).then(
+                () => result.innerHTML = '<span class="success">✓ Servidor encontrado! (modo multi-tenant disponível)</span>',
+                () => result.innerHTML = '<span class="error">✗ Sem servidor (usando modo offline local)</span>'
+            );
+        }
+
+        // Inicializa
+        updateStatus();
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+📌 COMO USAR LIVE SERVER NO VS CODE
+═════════════════════════════════════════════════════════════════════════
+
+PASSO 1: Abra VS Code
+   - Clique em Extensions (Ctrl+Shift+X) na aba da esquerda
+
+PASSO 2: Procure por "Live Server"
+   - Digite na caixa de busca: "Live Server"
+   - Desenvolvedora: Yatharth Agarwal
+   - Clique em INSTALL (botão azul)
+
+PASSO 3: Ative a extensão
+   - Recarregue VS Code se pedido
+   - Clique em "Enable"
+
+PASSO 4: Iniciar o servidor
+   - Abra a pasta outletpro no VS Code
+   - Clique com botão DIREITO em index.html
+   - Selecione: "Open with Live Server"
+   
+   OU
+
+   - Clique no botão "Go Live" no canto inferior direito (status bar)
+
+PASSO 5: Pronto!
+   - Abre automaticamente em: http://localhost:5500/
+   - Salva arquivo → browser recarrega automático
+
+═════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,94 @@
+╔════════════════════════════════════════════════════════════════════════╗
+║                    OPÇÕES DE SERVIDOR PARA OUTLETPRO                   ║
+║                          (Windows)                                      ║
+╚════════════════════════════════════════════════════════════════════════╝
+
+⚡ SOLUÇÃO 1: PYTHON (MAIS FÁCIL - Já vem no Windows 10/11)
+═══════════════════════════════════════════════════════════════════════
+
+PASSO 1: Abra PowerShell (Win+X → PowerShell)
+
+PASSO 2: Navegue até a pasta do projeto:
+   cd C:\Users\joaol\Music\outletpro
+
+PASSO 3: Inicie o servidor Python:
+   python -m http.server 8000
+
+   OU (se for Python 2):
+   python -m SimpleHTTPServer 8000
+
+PASSO 4: Abra o navegador e acesse:
+   http://localhost:8000
+
+✓ Pronto! O site está rodando.
+
+⚠️ Se der erro "python não encontrado", tente:
+   python3 -m http.server 8000
+
+═════════════════════════════════════════════════════════════════════════
+
+⚡ SOLUÇÃO 2: VS CODE COM LIVE SERVER (Mais moderno)
+═════════════════════════════════════════════════════════════════════════
+
+PASSO 1: Abra a pasta outletpro no VS Code
+
+PASSO 2: Instale a extensão "Live Server":
+   - Clique na aba Extensions (Ctrl+Shift+X)
+   - Procure por "Live Server"
+   - Clique em Install
+   - Desenvolvedor: Yatharth Agarwal
+
+PASSO 3: Clique com botão direito em index.html → "Open with Live Server"
+
+✓ Pronto! Abre automaticamente em http://localhost:5500/
+
+═════════════════════════════════════════════════════════════════════════
+
+⚡ SOLUÇÃO 3: NODE.JS SIMPLES (Se tiver Node.js)
+═════════════════════════════════════════════════════════════════════════
+
+PASSO 1: Na pasta do projeto, abra PowerShell
+
+PASSO 2: Execute:
+   node server-simple.js
+
+PASSO 3: Acesse:
+   http://localhost:3000
+
+═════════════════════════════════════════════════════════════════════════
+
+🎯 RECOMENDAÇÃO
+═════════════════════════════════════════════════════════════════════════
+
+Para desenvolvimento rápido:
+  → Use SOLUÇÃO 2 (VS Code + Live Server)
+  
+Para produção/cliente final:
+  → Use SOLUÇÃO 1 (Python) ou SOLUÇÃO 3 (Node.js)
+
+═════════════════════════════════════════════════════════════════════════
+
+❌ TROUBLESHOOTING
+═════════════════════════════════════════════════════════════════════════
+
+1. "Porta já em uso"
+   Mude para outra porta:
+   → Python: python -m http.server 9000
+   → Node: PORT=3001 node server-simple.js
+
+2. "Python não encontrado"
+   Verifique se há Python instalado:
+   → python --version
+   → python3 --version
+   
+   Se não tiver, baixe em: https://www.python.org/downloads/
+
+3. "Node.js não encontrado"
+   Baixe em: https://nodejs.org/
+   Ou use Python/Live Server em vez disso
+
+4. "Não abre no navegador"
+   Copie a URL que aparece no terminal
+   Cole manualmente na barra de endereço
+
+═════════════════════════════════════════════════════════════════════════

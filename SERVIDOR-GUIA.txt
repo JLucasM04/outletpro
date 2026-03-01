@@ -1,0 +1,116 @@
+╔═══════════════════════════════════════════════════════════════╗
+║           OUTLETPRO - GUIA DE INSTALAÇÃO DO SERVIDOR          ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🚀 OPÇÃO 1: AUTOMÁTICA (Recomendado)
+═══════════════════════════════════════════════════════════════
+
+1. Clique duas vezes em:
+   → inicia-servidor.bat
+
+2. O script:
+   ✓ Verifica se Node.js está instalado
+   ✓ Se não estiver, oferece opções para instalar
+   ✓ Inicia o servidor automaticamente
+
+3. Você verá:
+   ✓ http://localhost:3000
+   ✓ http://localhost:3000/login.html
+   ✓ http://localhost:3000/admin.html
+
+4. O servidor estará rodando!
+
+═══════════════════════════════════════════════════════════════
+
+✨ OPÇÃO 2: MANUAL (Se a automática não funcionar)
+═══════════════════════════════════════════════════════════════
+
+Passo 1: Instalar Node.js
+────────────────────────
+1. Acesse: https://nodejs.org
+2. Baixe a versão LTS (recomendado)
+3. Execute o instalador
+4. Aceite as opções padrão
+5. Reinicie o computador (se solicitado)
+
+Passo 2: Verificar instalação
+────────────────────────────
+1. Abra PowerShell (Win + X → Windows PowerShell)
+2. Digite: node --version
+3. Deve aparecer v16.0.0 (ou similar)
+
+Passo 3: Rodar o servidor
+────────────────────────
+1. Abra PowerShell em: C:\Users\joaol\Music\outletpro
+2. Digite: cd server
+3. Digite: node server-simple.js
+4. Você verá:
+   ✓ "http://localhost:3000"
+   ✓ "Rodando 🚀"
+
+Passo 4: Acessar o sistema
+──────────────────────────
+1. Abra o navegador
+2. Acesse: http://localhost:3000
+3. Login: admin@minha-loja.com / sua-senha
+
+═══════════════════════════════════════════════════════════════
+
+❓ CRIANDO PRIMEIRA EMPRESA
+═══════════════════════════════════════════════════════════════
+
+1. Acesse: http://localhost:3000/admin.html
+2. Preencha:
+   - Nome: "Minha Loja"
+   - Slug: "minha-loja"
+   - Email: "admin@minha-loja.com"
+   - Senha: "senha123"
+3. Clique em "Criar"
+
+4. Depois faça login em http://localhost:3000/login.html com:
+   - Email: admin@minha-loja.com
+   - Senha: senha123
+
+═══════════════════════════════════════════════════════════════
+
+🔧 SE AINDA NÃO FUNCIONAR
+═══════════════════════════════════════════════════════════════
+
+1. Abra PowerShell como Administrador
+2. Digite: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
+3. Digite: Y (e Enter)
+
+4. Tente novamente: inicia-servidor.bat
+
+═══════════════════════════════════════════════════════════════
+
+📱 ALTERNATIVA: Sem Servidor
+═══════════════════════════════════════════════════════════════
+
+Se não conseguir instalar Node.js, use direto:
+
+→ Abra: quick-test.html
+→ Login: admin / 123
+→ Clique em "Abrir Dashboard"
+
+Os dados fica no navegador (localStorage), não é persistente
+entre máquinas mas funciona para testes.
+
+═══════════════════════════════════════════════════════════════
+
+📞 ERROS COMUNS
+═══════════════════════════════════════════════════════════════
+
+"node não é reconhecido"
+→ Node.js não está no PATH
+→ Solução: Instale Node.js novamente e reinicie o PC
+
+"Address already in use :3000"
+→ Outra aplicação usa a porta 3000
+→ Solução: Feche a outra aplicação ou troque a porta em server-simple.js
+
+"Acesso negado ao inicia-servidor.bat"
+→ Bloqueio de política de execução do Windows
+→ Solução: Use Set-ExecutionPolicy (vide seção acima)
+
+═══════════════════════════════════════════════════════════════

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutletPro - Reset de Dados</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { background: #09090e; }
+        body { 
+            font-family: 'DM Sans', Arial, sans-serif;
+            background: #09090e; 
+            color: #eeeef5; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            padding: 20px;
+        }
+        .container { 
+            background: #111119; 
+            border: 1px solid #444; 
+            border-radius: 12px; 
+            padding: 40px; 
+            width: 100%; 
+            max-width: 500px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+        }
+        h1 { 
+            font-size: 24px; 
+            margin-bottom: 10px;
+            color: #ff6b9d;
+        }
+        .subtitle { 
+            font-size: 12px; 
+            color: #7777aa; 
+            margin-bottom: 30px; 
+        }
+        .box {
+            background: #0f0f17;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .box h2 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #7c6dff;
+        }
+        .box p {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        code {
+            background: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00d4aa;
+        }
+        button { 
+            width: 100%;
+            padding: 12px; 
+            background: #7c6dff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        button:hover { 
+            background: #5a4de0;
+        }
+        button.danger {
+            background: #ff6b9d;
+        }
+        button.danger:hover {
+            background: #e0416e;
+        }
+        button.success {
+            background: #00d4aa;
+        }
+        button.success:hover {
+            background: #00a882;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            display: none;
+        }
+        .status.info {
+            background: rgba(124,109,255,0.1);
+            color: #7c6dff;
+            border-left: 3px solid #7c6dff;
+            display: block;
+        }
+        .status.success {
+            background: rgba(0,212,170,0.1);
+            color: #00d4aa;
+            border-left: 3px solid #00d4aa;
+            display: block;
+        }
+        .status.error {
+            background: rgba(255,82,114,0.1);
+            color: #ff5272;
+            border-left: 3px solid #ff5272;
+            display: block;
+        }
+        .checklist {
+            font-size: 12px;
+            margin-top: 12px;
+        }
+        .checklist div {
+            padding: 6px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 OutletPro - Reset</h1>
+        <div class="subtitle">Ferramenta de Reset e Diagnóstico</div>
+
+        <div class="box">
+            <h2>📋 Diagnóstico Atual</h2>
+            <div class="checklist" id="diagnostico">
+                <div>⏳ Analisando...</div>
+            </div>
+        </div>
+
+        <div class="box">
+            <h2>🚀 Ações Disponíveis</h2>
+            <button class="success" onclick="testarLogin()">✓ Testar Login (admin / demo)</button>
+            <button onclick="resetarTudo()">🔄 Resetar Dados (CUIDADO!)</button>
+            <button onclick="recarregarIndex()">📖 Ir ao Dashboard</button>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        // Valores padrão (senhas neutralizadas para publicação pública)
+        const DEFAULT_SELLERS = [
+            { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '', email: 'admin@outletpro.com', tel: '', cargo: 'Administrador', meta: 0, status: 'Ativo', avatar: 'AD', color: '#ff6b9d', vendas: 0, total: 0, perms: [] }
+        ];
+
+        function diagnostico() {
+            const diag = document.getElementById('diagnostico');
+            
+            let html = '';
+            
+            // Verificar localStorage
+            const hasSellers = !!localStorage.getItem('op_sellers');
+            const statusSellers = hasSellers ? '✓ Dados encontrados' : '✗ Vazio';
+            html += `<div>Sellers: ${statusSellers}</div>`;
+            
+            // Verificar dados
+            let sellers = [];
+            try {
+                sellers = JSON.parse(localStorage.getItem('op_sellers')) || [];
+            } catch (e) {
+                html += `<div>⚠️ Erro ao ler dados: ${e.message}</div>`;
+            }
+            
+            if (sellers.length > 0) {
+                html += `<div>✓ ${sellers.length} vendedor(es) encontrado(s)</div>`;
+                const hasAdmin = sellers.some(s => s.user === 'admin');
+                html += `<div>${hasAdmin ? '✓' : '✗'} Admin (presente): ${hasAdmin ? 'OK' : 'FALTA'}</div>`;
+            } else {
+                html += `<div>✗ Nenhum vendedor cadastrado</div>`;
+            }
+            
+            diag.innerHTML = html;
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        function testarLogin() {
+            try {
+                let sellers = JSON.parse(localStorage.getItem('op_sellers')) || DEFAULT_SELLERS.slice();
+                
+                if (sellers.length === 0) {
+                    showStatus('❌ Nenhum vendedor cadastrado. Use "Resetar Dados" primeiro.', 'error');
+                    return;
+                }
+                
+                // Teste rápido: verifica se existe o usuário admin (senha demo neutralizada)
+                const found = sellers.find(s => s.user === 'admin');
+                
+                if (found) {
+                    showStatus('✓ Login OK! Redirecionando...', 'success');
+                    localStorage.setItem('op_sellers', JSON.stringify(sellers));
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    showStatus('❌ Admin não encontrado nos dados. Use "Resetar Dados"', 'error');
+                }
+            } catch (e) {
+                showStatus(`❌ Erro: ${e.message}. localStorage pode estar desabilitado.`, 'error');
+            }
+        }
+
+        function resetarTudo() {
+            try {
+                if (!confirm('CUIDADO!\n\nIsso vai DELETAR todos os dados e vendedores cadastrados.\n\nTem certeza?')) {
+                    return;
+                }
+                
+                if (!confirm('Confirmar novamente?\n\nOs dados anteriores serão PERDIDOS PERMANENTEMENTE.')) {
+                    return;
+                }
+
+                // Limpar localStorage com try-catch
+                try { localStorage.removeItem('op_sellers'); } catch (e) {}
+                try { localStorage.removeItem('op_produtos'); } catch (e) {}
+                try { localStorage.removeItem('op_vendas'); } catch (e) {}
+                try { localStorage.removeItem('token'); } catch (e) {}
+                
+                // Restaurar valores padrão
+                try {
+                    localStorage.setItem('op_sellers', JSON.stringify(DEFAULT_SELLERS));
+                    localStorage.setItem('op_produtos', JSON.stringify([]));
+                    localStorage.setItem('op_vendas', JSON.stringify([]));
+                    showStatus('✓ Dados resetados! Agora use: admin / (demo)', 'success');
+                } catch (e) {
+                    showStatus(`❌ ERRO: Não foi possível salvar dados.\n\nErro: ${e.message}\n\nVerifique:\n1. localStorage está desabilitado?\n2. Quote de espaço excedida?\n3. Browser em modo privado?`, 'error');
+                    return;
+                }
+                
+                diagnostico();
+                
+                setTimeout(() => {
+                    showStatus('Redirecionando para dashboard...', 'info');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }, 1500);
+            } catch (e) {
+                showStatus(`❌ Erro geral: ${e.message}`, 'error');
+            }
+        }
+
+        function recarregarIndex() {
+            // Garantir que os dados padrão existem
+            if (!localStorage.getItem('op_sellers')) {
+                localStorage.setItem('op_sellers', JSON.stringify(DEFAULT_SELLERS));
+            }
+            window.location.href = 'index.html';
+        }
+
+        // Rodar diagnóstico ao carregar
+        diagnostico();
+    </script>
+</body>
+</html>

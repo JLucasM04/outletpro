@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutletPro - Teste de Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'DM Sans', Arial, sans-serif;
+            background: #09090e; 
+            color: #eeeef5; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            padding: 20px;
+        }
+        .container { 
+            background: #111119; 
+            border: 1px solid #444; 
+            border-radius: 12px; 
+            padding: 40px; 
+            width: 100%; 
+            max-width: 400px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+        }
+        h1 { 
+            font-size: 24px; 
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #7c6dff, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { 
+            font-size: 12px; 
+            color: #7777aa; 
+            margin-bottom: 30px; 
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .form-group { 
+            margin-bottom: 16px; 
+        }
+        label { 
+            display: block; 
+            font-size: 12px; 
+            color: #7777aa; 
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: #0f0f17; 
+            border: 1px solid rgba(255,255,255,0.07); 
+            border-radius: 8px; 
+            color: #eeeef5;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input:focus { 
+            outline: none;
+            border-color: #7c6dff;
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: #7c6dff; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        button:hover { 
+            background: #5a4de0;
+        }
+        .message { 
+            margin-top: 16px; 
+            padding: 12px; 
+            border-radius: 8px;
+            font-size: 12px;
+            display: none;
+        }
+        .message.error { 
+            background: rgba(255,82,114,0.1); 
+            color: #ff5272; 
+            display: block;
+            border-left: 3px solid #ff5272;
+        }
+        .message.success { 
+            background: rgba(0,212,170,0.1); 
+            color: #00d4aa; 
+            display: block;
+            border-left: 3px solid #00d4aa;
+        }
+        .info-box {
+            background: rgba(124,109,255,0.1);
+            border: 1px solid #7c6dff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+        .info-box strong { color: #7c6dff; }
+        .debug-info {
+            margin-top: 20px;
+            padding: 12px;
+            background: #0f0f17;
+            border-radius: 8px;
+            font-size: 11px;
+            font-family: monospace;
+            color: #00d4aa;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OutletPro</h1>
+        <div class="subtitle">Sistema de Gestão de Vendas</div>
+
+        <div class="info-box">
+            <strong>✓ Credencial padrão:</strong><br>
+            Usuário: <code>admin</code><br>
+            Senha: <code>123</code>
+        </div>
+
+        <div class="form-group">
+            <label>Usuário</label>
+            <input type="text" id="user" value="admin" placeholder="admin">
+        </div>
+
+        <div class="form-group">
+            <label>Senha</label>
+            <input type="password" id="pass" value="123" placeholder="123">
+        </div>
+
+        <button onclick="testarLogin()">Entrar</button>
+        <button onclick="debugar()" style="background: #444; margin-top: 8px;">🔍 Verificar Dados</button>
+
+        <div id="message" class="message"></div>
+        <div id="debug" class="debug-info" style="display:none;"></div>
+    </div>
+
+    <script>
+        // Dados padrão
+        var DEFAULT_SELLERS = [
+            { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '123', email: 'admin@outletpro.com', tel: '', cargo: 'Administrador', meta: 0, status: 'Ativo', avatar: 'AD', color: '#ff6b9d', vendas: 0, total: 0, perms: [] }
+        ];
+
+        var sellers = JSON.parse(localStorage.getItem('op_sellers')) || DEFAULT_SELLERS.slice();
+
+        function testarLogin() {
+            const user = document.getElementById('user').value.trim();
+            const pass = document.getElementById('pass').value.trim();
+            const msg = document.getElementById('message');
+
+            console.log('Tentativa de login:', { user, pass });
+            console.log('Sellers disponíveis:', sellers);
+
+            if (!user || !pass) {
+                msg.className = 'message error';
+                msg.textContent = '❌ Preencha usuário e senha';
+                return;
+            }
+
+            const found = sellers.find(s => {
+                console.log('Comparando:', s.user, '===', user, '&&', s.senha, '===', pass);
+                return s.user === user && s.senha === pass;
+            });
+
+            if (!found) {
+                msg.className = 'message error';
+                msg.textContent = '❌ Usuário ou senha incorretos';
+                console.error('Usuário não encontrado');
+                return;
+            }
+
+            if (found.status !== 'Ativo') {
+                msg.className = 'message error';
+                msg.textContent = '⚠️ Esta conta está inativa';
+                return;
+            }
+
+            msg.className = 'message success';
+            msg.textContent = `✓ Login válido! Bem-vindo, ${found.nome}`;
+            
+            // Salvar localStorage e redirecionar
+            localStorage.setItem('op_sellers', JSON.stringify(sellers));
+            localStorage.setItem('currentUser', JSON.stringify(found));
+            
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        }
+
+        function debugar() {
+            const debug = document.getElementById('debug');
+            debug.style.display = debug.style.display === 'none' ? 'block' : 'none';
+            
+            if (debug.style.display === 'block') {
+                debug.innerHTML = `
+                    <strong>🔍 DEBUG INFO</strong><br><br>
+                    <strong>Sellers carregados:</strong><br>
+                    ${JSON.stringify(sellers, null, 2)}<br><br>
+                    <strong>LocalStorage:</strong><br>
+                    op_sellers: ${localStorage.getItem('op_sellers') ? '✓ Existe' : '✗ Vazio'}<br><br>
+                    <strong>Valores dos inputs:</strong><br>
+                    user: "${document.getElementById('user').value}"<br>
+                    pass: "${document.getElementById('pass').value}"
+                `;
+            }
+        }
+
+        // Pressione Enter para logar
+        document.addEventListener('keypress', e => {
+            if (e.key === 'Enter') testarLogin();
+        });
+
+        // Verificar dados ao carregar
+        console.log('📊 Estado inicial:');
+        console.log('Sellers:', sellers);
+        console.log('LocalStorage op_sellers:', localStorage.getItem('op_sellers'));
+    </script>
+</body>
+</html>

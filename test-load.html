@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+    <h1>Sistema de Testes</h1>
+    <button onclick="testFile()">Carregar index.html</button>
+    <button onclick="testLogin()">Testar Login</button>
+    <div id="result"></div>
+    
+    <script>
+        function testFile() {
+            fetch('index.html')
+                .then(r => r.text())
+                .then(html => {
+                    const hasLoginView = html.includes('id="login-view"');
+                    const hasAppView = html.includes('id="app-view"');
+                    const hasScript = html.includes('<script>');
+                    const hasDoLogin = html.includes('function doLogin');
+                    
+                    const msg = `
+                    Login View: ${hasLoginView ? '✓ OK' : '✗ MISSING'}<br>
+                    App View: ${hasAppView ? '✓ OK' : '✗ MISSING'}<br>
+                    Script Tag: ${hasScript ? '✓ OK' : '✗ MISSING'}<br>
+                    doLogin Function: ${hasDoLogin ? '✓ OK' : '✗ MISSING'}
+                    `;
+                    document.getElementById('result').innerHTML = msg;
+                })
+                .catch(e => document.getElementById('result').innerHTML = 'Erro: ' + e.message);
+        }
+        
+        function testLogin() {
+            // Tenta carregar o arquivo em um iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = 'index.html';
+            iframe.onload = () => {
+                try {
+                    const iframeWin = iframe.contentWindow;
+                    const hasSellers = iframeWin.sellers ? '✓ arrays carregados' : '✗ arrays vazios';
+                    document.getElementById('result').innerHTML = 'iframe: ' + hasSellers;
+                } catch(e) {
+                    document.getElementById('result').innerHTML = 'Erro iframe: ' + e.message;
+                }
+            };
+            iframe.onerror = () => document.getElementById('result').innerHTML = '✗ Erro ao carregar iframe';
+            document.body.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>

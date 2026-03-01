@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutletPro - Teste de Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', Arial, sans-serif;
+            background: #09090e;
+            color: #eeeef5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #111119;
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #ff6b9d;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: #7777aa;
+            margin-bottom: 30px;
+        }
+        .box {
+            background: #0f0f17;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .box h2 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #7c6dff;
+        }
+        .box p {
+            font-size: 12px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            font-family: monospace;
+        }
+        code {
+            background: #000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00d4aa;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 12px;
+            background: #0f0f17;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #eeeef5;
+            font-family: monospace;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #7c6dff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-top: 8px;
+        }
+        button:hover {
+            background: #5a4de0;
+        }
+        button.danger {
+            background: #ff6b9d;
+        }
+        button.danger:hover {
+            background: #e0416e;
+        }
+        button.success {
+            background: #00d4aa;
+        }
+        button.success:hover {
+            background: #00a882;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 12px;
+            display: none;
+        }
+        .status.info {
+            background: rgba(124,109,255,0.1);
+            color: #7c6dff;
+            border-left: 3px solid #7c6dff;
+            display: block;
+        }
+        .status.success {
+            background: rgba(0,212,170,0.1);
+            color: #00d4aa;
+            border-left: 3px solid #00d4aa;
+            display: block;
+        }
+        .status.error {
+            background: rgba(255,82,114,0.1);
+            color: #ff5272;
+            border-left: 3px solid #ff5272;
+            display: block;
+        }
+        .log-box {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 12px;
+        }
+        .log-line {
+            padding: 4px 0;
+            border-bottom: 1px solid #222;
+        }
+        .log-line.error { color: #ff5272; }
+        .log-line.success { color: #00d4aa; }
+        .log-line.info { color: #7c6dff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste de Login</h1>
+        <div class="subtitle">Ferramenta de diagnóstico de autenticação</div>
+
+        <div class="box">
+            <h2>📝 Credenciais Padrão</h2>
+            <p>Usuário: <code>admin</code></p>
+            <p>Senha: <code>123</code></p>
+        </div>
+
+        <div class="box">
+            <h2>🔐 Teste Manual</h2>
+            <p>Usuário:</p>
+            <input type="text" id="user" placeholder="admin" value="admin">
+            <p>Senha:</p>
+            <input type="password" id="pass" placeholder="123" value="123">
+            <button onclick="testarLogin()">Testar Login</button>
+        </div>
+
+        <div class="box">
+            <h2>📊 Estado Atual</h2>
+            <div id="estado"></div>
+        </div>
+
+        <div class="box">
+            <h2>🔧 Ações</h2>
+            <button class="success" onclick="diagnostico()">🔍 Diagnosticar Sistema</button>
+            <button onclick="testarFunctions()">🧪 Testar Funções</button>
+            <button class="danger" onclick="limpar()">🗑️ Limpar localStorage</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div class="box">
+            <h2>📋 Log de Execução</h2>
+            <div class="log-box" id="log"></div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_SELLERS = [
+            { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '123', email: 'admin@outletpro.com', tel: '', cargo: 'Administrador', meta: 0, status: 'Ativo', avatar: 'AD', color: '#ff6b9d', vendas: 0, total: 0, perms: [] }
+        ];
+
+        let logs = [];
+
+        function addLog(msg, type = 'info') {
+            logs.push({ msg, type });
+            updateLog();
+        }
+
+        function updateLog() {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML = logs.map(l => `<div class="log-line ${l.type}">${l.msg}</div>`).join('');
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.className = `status ${type}`;
+            status.textContent = message;
+        }
+
+        function trimInput(str) {
+            return String(str || '').trim().slice(0, 200);
+        }
+
+        function testarLogin() {
+            logs = [];
+            addLog('🔄 Iniciando teste de login...', 'info');
+
+            const user = trimInput(document.getElementById('user').value);
+            const pass = trimInput(document.getElementById('pass').value);
+
+            addLog(`📌 Usuário digitado: "${user}"`, 'info');
+            addLog(`📌 Senha digitada: ${'*'.repeat(pass.length)}`, 'info');
+
+            if (!user || !pass) {
+                addLog('❌ Campos vazios!', 'error');
+                showStatus('❌ Campos vazios', 'error');
+                return;
+            }
+
+            let sellers = JSON.parse(localStorage.getItem('op_sellers')) || DEFAULT_SELLERS.slice();
+            addLog(`📊 Sellers no localStorage: ${sellers.length} registros`, 'info');
+
+            sellers.forEach((s, i) => {
+                const matches = s.user === user && s.senha === pass;
+                addLog(`  [${i}] user="${s.user}" | senha="${s.senha}" | match=${matches}`, matches ? 'success' : 'info');
+            });
+
+            const found = sellers.find(s => s.user === user && s.senha === pass);
+
+            if (!found) {
+                addLog('❌ FALHA: Acesso negado', 'error');
+                showStatus('❌ Acesso negado - credenciais inválidas', 'error');
+                return;
+            }
+
+            if (found.status !== 'Ativo') {
+                addLog('⚠️ FALHA: Conta inativa', 'error');
+                showStatus('⚠️ Conta inativa', 'error');
+                return;
+            }
+
+            addLog(`✅ SUCESSO: Login de ${found.nome}`, 'success');
+            showStatus(`✅ Login bem-sucedido para ${found.nome}!`, 'success');
+        }
+
+        function diagnostico() {
+            logs = [];
+            addLog('🔍 Iniciando diagnóstico...', 'info');
+
+            // 1. Verificar localStorage
+            try {
+                const teste = '__teste__';
+                localStorage.setItem(teste, teste);
+                localStorage.removeItem(teste);
+                addLog('✅ localStorage disponível', 'success');
+            } catch (e) {
+                addLog(`❌ localStorage indisponível: ${e.message}`, 'error');
+                showStatus('❌ localStorage desabilitado no navegador', 'error');
+                return;
+            }
+
+            // 2. Verificar dados
+            let sellers = JSON.parse(localStorage.getItem('op_sellers')) || DEFAULT_SELLERS.slice();
+            addLog(`✅ Sellers carregados: ${sellers.length} registros`, 'info');
+
+            sellers.forEach(s => {
+                addLog(`  • ${s.nome} (user: ${s.user}, status: ${s.status})`, 'info');
+            });
+
+            // 3. Verificar admin padrão
+            const hasAdmin = sellers.some(s => s.user === 'admin' && s.senha === '123');
+            if (hasAdmin) {
+                addLog('✅ admin/123 encontrado', 'success');
+            } else {
+                addLog('⚠️ admin/123 NÃO encontrado - reconfigure!', 'error');
+                showStatus('⚠️ Credenciais padrão não encontradas', 'error');
+                return;
+            }
+
+            // 4. Verificar funções
+            if (typeof trimInput === 'function') {
+                addLog('✅ trimInput() disponível', 'success');
+            } else {
+                addLog('❌ trimInput() não definida!', 'error');
+            }
+
+            addLog('✅ Diagnóstico concluído', 'success');
+            showStatus('✅ Sistema operacional. Tente fazer login acima.', 'success');
+        }
+
+        function testarFunctions() {
+            logs = [];
+            addLog('🧪 Testando funções internas...', 'info');
+
+            // Teste trimInput
+            try {
+                const result = trimInput('  admin  ');
+                addLog(`trimInput("  admin  ") = "${result}"`, result === 'admin' ? 'success' : 'error');
+            } catch (e) {
+                addLog(`❌ trimInput erro: ${e.message}`, 'error');
+            }
+
+            // Teste comparação de string
+            try {
+                const a = 'admin';
+                const b = 'admin';
+                const match = a === b;
+                addLog(`"${a}" === "${b}" = ${match}`, match ? 'success' : 'error');
+            } catch (e) {
+                addLog(`❌ Comparação erro: ${e.message}`, 'error');
+            }
+
+            addLog('✅ Testes concluídos', 'success');
+        }
+
+        function limpar() {
+            if (!confirm('Isso vai apagar TODOS os dados. Tem certeza?')) return;
+            
+            localStorage.removeItem('op_sellers');
+            localStorage.removeItem('op_produtos');
+            localStorage.removeItem('op_vendas');
+            
+            localStorage.setItem('op_sellers', JSON.stringify(DEFAULT_SELLERS));
+            localStorage.setItem('op_produtos', JSON.stringify([]));
+            localStorage.setItem('op_vendas', JSON.stringify([]));
+            
+            logs = [];
+            addLog('✅ localStorage limpo e reinicializado', 'success');
+            showStatus('✅ Dados resetados. Agora use admin/123', 'success');
+        }
+
+        // Rodar diagnóstico ao carregar
+        window.addEventListener('load', diagnostico);
+    </script>
+</body>
+</html>
