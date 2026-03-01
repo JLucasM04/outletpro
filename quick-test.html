@@ -65,7 +65,7 @@
             const pass = document.getElementById('pass').value;
             
             let sellers = JSON.parse(localStorage.getItem('op_sellers')) || [
-                { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '', email: 'admin@outletpro.com', status: 'Ativo' }
+                { id: 0, nome: 'Administrador Geral', user: 'admin', senha: '123', email: 'admin@outletpro.com', status: 'Ativo' }
             ];
             
             const found = sellers.find(s => s.user === user && s.senha === pass);
