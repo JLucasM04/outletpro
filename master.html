@@ -1,402 +1,550 @@
-<!DOCTYPE html>
-<html lang="pt-BR" data-theme="dark">
+﻿<!doctype html>
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OutletPro — Painel Master</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>OutletPro — Admin Master</title>
     <style>
-        :root[data-theme="dark"] { --bg:#09090e; --card:#111119; --text:#eeeef5; --text2:#7777aa; --border:rgba(255,255,255,0.07); --accent:#7c6dff; --ok:#00d4aa; --danger:#ff5272; }
-        :root[data-theme="light"] { --bg:#f2f2f8; --card:#ffffff; --text:#18182e; --text2:#666688; --border:rgba(0,0,0,0.07); --accent:#5a4de0; --ok:#00a882; --danger:#d42848; }
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; transition:background .3s,color .3s; }
-        input, select, button { font-family:inherit; }
-        .login-wrapper { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--bg); z-index:1000; }
-        .login-card { background:var(--card); padding:40px; border-radius:20px; width:100%; max-width:450px; border:1px solid var(--border); box-shadow:0 8px 40px rgba(0,0,0,.5); text-align:center; }
-        .login-logo { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; background:linear-gradient(135deg,var(--accent),#ff6b9d); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:8px; }
-        .login-sub { font-size:13px; color:var(--text2); margin-bottom:30px; }
-        .login-form { display:flex; flex-direction:column; gap:16px; }
-        input { background:var(--card); border:1px solid var(--border); border-radius:9px; padding:12px 14px; font-size:13px; color:var(--text); outline:none; transition:border-color .18s; width:100%; }
-        input:focus { border-color:var(--accent); }
-        input::placeholder { color:var(--text2); }
-        button { background:linear-gradient(135deg,var(--accent),#9d6dff); color:#fff; border:none; border-radius:9px; padding:12px; font-weight:600; cursor:pointer; transition:all .18s; width:100%; }
-        button:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(124,109,255,.45); }
-        .error { color:var(--danger); font-size:12px; margin-top:14px; display:none; font-weight:600; }
-        .content { display:none; }
-        .content.active { display:block; }
-        .container { max-width:1200px; margin:0 auto; padding:20px; }
-        .header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; }
-        .header h1 { font-family:'Syne',sans-serif; font-size:24px; font-weight:700; }
-        .btn-logout { background:var(--danger); padding:8px 16px; color:#fff; border-radius:8px; cursor:pointer; font-size:12px; }
-        .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:18px; margin-top:20px; }
-        .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; }
-        .card-title { font-weight:700; margin-bottom:14px; }
-        .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
-        .form-group label { font-size:11px; font-weight:700; color:var(--text2); letter-spacing:.4px; }
-        .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:300; align-items:center; justify-content:center; backdrop-filter:blur(5px); }
-        .modal.open { display:flex; animation:fadein .2s ease; }
-        .modal-content { background:var(--card); border:1px solid var(--border); border-radius:20px; width:540px; max-width:95vw; max-height:90vh; overflow-y:auto; padding:30px; }
-        .modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; margin-bottom:20px; }
-        .modal-footer { display:flex; gap:9px; justify-content:flex-end; margin-top:20px; }
-        .btn-secondary { background:var(--card); border:1px solid var(--border); color:var(--text); padding:8px 16px; border-radius:8px; cursor:pointer; }
-        @keyframes fadein { from { opacity:0; transform:translateY(6px) } to { opacity:1; transform:translateY(0) } }
+        :root{--bg:#090b13;--bg2:#121629;--card:#111524;--card-soft:#171c2e;--text:#e9ecff;--muted:#9aa3c7;--line:#2a3047;--accent:#7c6dff;--accent2:#b97fff;--danger:#ff6b88}
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:radial-gradient(1200px 800px at 20% -10%,#1b2040 0%,var(--bg) 45%),var(--bg);color:var(--text);padding:26px}
+        .card{background:linear-gradient(180deg,var(--card) 0%,#0f1322 100%);padding:24px;border-radius:14px;max-width:1100px;margin:20px auto;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.45)}
+        header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+        header h1{margin:0;text-align:left;font-size:42px;letter-spacing:-.5px}
+        h2{margin:0;color:#fff;font-size:36px;letter-spacing:-.5px}
+        .btn-logout{background:#2b1730;border:1px solid #4e2a56;color:#ffb7c6;padding:9px 14px;border-radius:10px;font-weight:700;cursor:pointer;white-space:nowrap}
+        .btn-logout:hover{filter:brightness(1.08)}
+        .tabs{display:flex;gap:10px;justify-content:center;margin:8px 0 20px}
+        .tabs button{padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:#141a2b;color:var(--text);cursor:pointer;font-weight:600}
+        .tabs button.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 8px 24px rgba(124,109,255,.35)}
+        .tab-panel{display:none}
+        .tab-panel.active{display:block}
+        section > div:first-child{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        form{display:grid;gap:12px;background:var(--card-soft);border:1px solid var(--line);padding:14px;border-radius:12px}
+        label{font-size:13px;color:var(--muted);font-weight:600}
+        input,select{padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:#0e1220;color:var(--text)}
+        input:focus,select:focus{outline:none;border-color:var(--accent)}
+        button{padding:10px 14px;border-radius:8px;border:1px solid transparent;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;font-weight:700;cursor:pointer}
+        button:hover{filter:brightness(1.06)}
+        #btn-cancel-client,#btn-cancel-contract,#btn-cancel-user{background:#1a2136;border:1px solid var(--line);color:#dbe2ff}
+        .actions{display:flex;gap:8px}
+        .actions button,.btn-small{padding:7px 12px;font-size:13px;border-radius:8px;min-width:86px}
+        .actions .del-client,.actions .del-contract,.actions .del-user{background:#2b1730;border:1px solid #4e2a56;color:#ffb7c6}
+        .small{font-size:12px;color:var(--muted)}
+        table{width:100%;border-collapse:separate;border-spacing:0;margin-top:12px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0d1120}
+        thead th{background:#171d32;color:#e5e9ff;font-size:13px}
+        th,td{padding:12px 10px;border-bottom:1px solid #242b42;font-size:14px;text-align:left}
+        tbody tr:last-child td{border-bottom:none}
+        tbody tr:hover{background:#151b30}
+        .error{color:#ff8ca3;font-size:13px}
+
+        @media (max-width: 900px){
+            body{padding:14px}
+            .card{padding:16px}
+            header{align-items:flex-start;flex-direction:column}
+            header h1{font-size:32px}
+            h2{font-size:28px}
+            #user-form{flex-wrap:wrap}
+            #user-form > div{min-width:220px}
+        }
+
+        @media (max-width: 680px){
+            header h1{font-size:26px}
+            h2{font-size:22px}
+            .tabs{justify-content:flex-start;overflow:auto;padding-bottom:6px}
+            .tabs button{white-space:nowrap}
+            section > div:first-child{gap:10px;align-items:flex-start;flex-direction:column}
+            table{display:block;overflow:auto;white-space:nowrap}
+            th,td{padding:10px 8px;font-size:13px}
+            .actions{gap:6px}
+            .actions button,.btn-small{min-width:80px;font-size:12px;padding:6px 10px}
+            #client-form-wrap > form > div[style*="display:flex"],
+            #contract-form-wrap > form > div[style*="display:flex"]{flex-direction:column}
+        }
     </style>
 </head>
 <body>
+    <div class="card">
+        <header>
+            <h1>OutletPro — Painel Master</h1>
+            <button class="btn-logout" onclick="logoutMaster()">🚪 Deslogar</button>
+        </header>
 
-<!-- LOGIN -->
-<div class="login-wrapper" id="login-view">
-    <div class="login-card">
-        <div class="login-logo">OutletPro</div>
-        <div class="login-sub">Acesse sua conta</div>
-        <div class="login-form">
-            <input type="text" id="master-user" placeholder="Usuário Master">
-            <input type="password" id="master-pass" placeholder="Senha" onkeyup="if(event.key==='Enter') masterLogin()">
-            <button onclick="masterLogin()">Entrar</button>
+        <div class="tabs" role="tablist">
+            <button data-tab="clients" class="active">Clientes</button>
+            <button data-tab="contracts">Contratos</button>
+            <button data-tab="users">Usuários</button>
         </div>
-        <div class="error" id="login-error">Usuário ou senha incorretos</div>
+
+        <section id="clients" class="tab-panel active" aria-hidden="false">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <h2>Clientes</h2>
+                <button id="btn-new-client">+ Novo cliente</button>
+            </div>
+
+            <div id="client-form-wrap" style="display:none;margin-top:12px">
+                <form id="client-form">
+                    <div>
+                        <label>Razão social *</label>
+                        <input id="company-legal-name" required />
+                    </div>
+                    <div>
+                        <label>Nome fantasia</label>
+                        <input id="company-name" />
+                    </div>
+                    <div>
+                        <label>CNPJ * (14 dígitos)</label>
+                        <input id="company-cnpj" maxlength="14" inputmode="numeric" />
+                        <div class="small">Somente números. Exemplo: 12345678000195</div>
+                        <div id="cnpj-error" class="error" style="display:none"></div>
+                    </div>
+                    <div>
+                        <label>UF *</label>
+                        <select id="company-uf" required>
+                            <option value="">Selecione</option>
+                            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                            <option>SP</option><option>SE</option><option>TO</option>
+                        </select>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button type="submit" style="min-width:140px;font-size:15px;padding:12px 0;">Salvar cliente</button>
+                        <button type="button" id="btn-cancel-client" style="min-width:110px;font-size:15px;padding:12px 0;background:#222;color:#fff;">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="clients-list" style="margin-top:14px">
+                <table>
+                    <thead><tr><th>Razão social</th><th>CNPJ</th><th>UF</th><th>Contratos ativos</th><th>Ações</th></tr></thead>
+                    <tbody id="clients-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="contracts" class="tab-panel" aria-hidden="true">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+                <h2>Contratos</h2>
+                <button id="btn-new-contract">+ Novo contrato</button>
+            </div>
+
+            <div id="contract-form-wrap" style="display:none;margin-top:12px">
+                <form id="contract-form">
+                    <div>
+                        <label>Empresa (cliente) *</label>
+                        <select id="contract-company" required></select>
+                    </div>
+                    <div>
+                        <label>Início da vigência *</label>
+                        <input id="contract-start" type="date" required />
+                    </div>
+                    <div>
+                        <label>Fim da vigência *</label>
+                        <input id="contract-end" type="date" required />
+                    </div>
+                    <div>
+                        <label>Módulos disponíveis</label>
+                        <div>
+                            <label><input type="checkbox" class="module-checkbox" value="dashboard" /> Dashboard</label>
+                            <label><input type="checkbox" class="module-checkbox" value="vendas" /> Vendas</label>
+                            <label><input type="checkbox" class="module-checkbox" value="produtos" /> Produtos</label>
+                            <label><input type="checkbox" class="module-checkbox" value="estoque" /> Estoque</label>
+                            <label><input type="checkbox" class="module-checkbox" value="notas" /> Notas Fiscais</label>
+                            <label><input type="checkbox" class="module-checkbox" value="relatorios" /> Relatórios</label>
+                            <label><input type="checkbox" class="module-checkbox" value="vendedores" /> Vendedores</label>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:6px">
+                        <button type="submit">Salvar contrato</button>
+                        <button type="button" id="btn-cancel-contract">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="contracts-list" style="margin-top:12px">
+                <table>
+                    <thead><tr><th>Empresa</th><th>Vigência</th><th>Status</th><th>Módulos</th><th>Ações</th></tr></thead>
+                    <tbody id="contracts-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="users" class="tab-panel" aria-hidden="true">
+            <h2>Usuários</h2>
+            <div style="margin-top:8px">
+                <form id="user-form" style="display:flex;gap:8px;align-items:end">
+                    <div style="flex:1">
+                        <label>Usuário (login) *</label>
+                        <input id="user-login" required />
+                    </div>
+                    <div style="flex:1">
+                        <label>Senha *</label>
+                        <input id="user-pass" type="password" required />
+                    </div>
+                    <div style="flex:1">
+                        <label>Empresa *</label>
+                        <select id="user-company" required></select>
+                    </div>
+                    <div>
+                        <button type="submit">Criar usuário</button>
+                    </div>
+                    <div>
+                        <button type="button" id="btn-cancel-user" style="display:none;min-width:120px;font-size:14px;padding:10px 0;">Cancelar edição</button>
+                    </div>
+                </form>
+            </div>
+
+            <div style="margin-top:12px">
+                <table>
+                    <thead><tr><th>Usuário</th><th>Empresa</th><th>Ações</th></tr></thead>
+                    <tbody id="users-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
     </div>
-</div>
 
-<!-- PAINEL MASTER -->
-<div class="content" id="master-view">
-    <div class="container">
-        <div class="header">
-            <h1>Painel Master - Proprietário</h1>
-            <button class="btn-logout" onclick="masterLogout()">Sair</button>
-        </div>
+    <script>
+        // Storage keys
+        const KEY_CLIENTS = 'op_clients';
+        const KEY_CONTRACTS = 'op_contracts';
+        const KEY_USERS = 'op_users';
+        let editingUserId = null;
 
-        <!-- Aba de navegação -->
-        <div style="display:flex;gap:8px;margin-bottom:20px">
-            <button class="btn btn-secondary" id="tab-btn-clients" onclick="showMasterTab('clients')">Clientes</button>
-            <button class="btn btn-secondary" id="tab-btn-contracts" onclick="showMasterTab('contracts')">Contratos</button>
-            <button class="btn btn-secondary" id="tab-btn-users" onclick="showMasterTab('users')">Usuários</button>
-        </div>
+        // utils
+        const $ = id => document.getElementById(id);
+        const save = (k,v)=> localStorage.setItem(k,JSON.stringify(v));
+        const load = k => JSON.parse(localStorage.getItem(k)||'[]');
 
-        <!-- Conteúdo das abas -->
-        <div id="tab-clients" class="tab-content">
-            <div class="card">
-                <div class="card-title">Gerenciar Empresas</div>
-                <button onclick="openNewCompanyModal()" style="margin-bottom:14px; padding:8px 16px; border-radius:8px; background:var(--accent); color:#fff; border:none; cursor:pointer;">+ Criar Empresa</button>
-                <div id="companies-list"></div>
-            </div>
-        </div>
-        <div id="tab-contracts" class="tab-content" style="display:none">
-            <div class="card">
-                <div class="card-title">Contratos</div>
-                <div id="contracts-list" style="padding:0 16px;"></div>
-            </div>
-        </div>
-        <div id="tab-users" class="tab-content" style="display:none">
-            <div class="card">
-                <div class="card-title">Usuários</div>
-                <div id="users-global-list" style="padding:0 16px;"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL: CRIAR/EDITAR EMPRESA -->
-<div class="modal" id="company-modal">
-    <div class="modal-content">
-        <div class="modal-title">Criar Empresa</div>
-        <div class="form-group">
-            <label>Razão Social</label>
-            <input type="text" id="company-legal-name">
-        </div>
-        <div class="form-group">
-            <label>Nome Fantasia</label>
-            <input type="text" id="company-name">
-        </div>
-        <div class="form-group">
-            <label>CNPJ</label>
-            <input type="text" id="company-cnpj">
-        </div>
-        <div class="form-group">
-            <label>Domínio (ex: minha-empresa)</label>
-            <input type="text" id="company-domain">
-        </div>
-        <div class="form-group">
-            <label>E-mail Administrador</label>
-            <input type="email" id="company-admin-email">
-        </div>
-        <div class="form-group">
-            <label>Início da Vigência</label>
-            <input type="date" id="company-contract-start">
-        </div>
-        <div class="form-group">
-            <label>Fim da Vigência</label>
-            <input type="date" id="company-contract-end">
-        </div>
-        <div class="form-group">
-            <label>Status do Contrato</label>
-            <select id="company-contract-status" style="padding:9px 12px; border:1px solid var(--border); border-radius:9px; background:var(--card); color:var(--text);">
-                <option value="Ativo">Ativo</option>
-                <option value="Inativo">Inativo</option>
-                <option value="Expirado">Expirado</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Módulos</label>
-            <div id="module-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;">
-                <label><input type="checkbox" class="module-checkbox" value="Dashboard"> Dashboard</label>
-                <label><input type="checkbox" class="module-checkbox" value="Vendas"> Vendas</label>
-                <label><input type="checkbox" class="module-checkbox" value="Produtos"> Produtos</label>
-                <label><input type="checkbox" class="module-checkbox" value="Estoque"> Estoque</label>
-                <label><input type="checkbox" class="module-checkbox" value="Relatórios"> Relatórios</label>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn-secondary" onclick="closeCompanyModal()">Cancelar</button>
-            <button onclick="saveCompany()" style="background:var(--accent); color:#fff; border:none; padding:8px 16px; border-radius:8px; cursor:pointer;">Salvar</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    const MASTER_USER = 'master';
-    const MASTER_PASS = '123';
-    let masterCurrentUser = null;
-    let companies = JSON.parse(localStorage.getItem('op_companies')) || [];
-
-    function masterLogin() {
-        const user = document.getElementById('master-user').value.trim();
-        const pass = document.getElementById('master-pass').value.trim();
-        const error = document.getElementById('login-error');
-
-        if (user === MASTER_USER && pass === MASTER_PASS) {
-            masterCurrentUser = { user: MASTER_USER, role: 'master' };
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('master-view').classList.add('active');
-            renderCompanies();
-        } else {
-            error.style.display = 'block';
+        // initial sample (only if empty)
+        if(!localStorage.getItem(KEY_CLIENTS)){
+            save(KEY_CLIENTS, [{id:1,legal:'OutletPro Master',name:'OutletPro',cnpj:'00000000000000',uf:'SP'}]);
         }
-    }
-
-    function masterLogout() {
-        masterCurrentUser = null;
-        document.getElementById('master-view').classList.remove('active');
-        document.getElementById('login-view').style.display = 'flex';
-        document.getElementById('master-user').value = '';
-        document.getElementById('master-pass').value = '';
-        document.getElementById('login-error').style.display = 'none';
-    }
-
-    function renderCompanies() {
-        const list = document.getElementById('companies-list');
-        if (companies.length === 0) {
-            list.innerHTML = '<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
-            return;
+        if(!localStorage.getItem(KEY_CONTRACTS)){
+            const now = new Date(); const start = now.toISOString().slice(0,10);
+            const later = new Date(now.getFullYear()+1,now.getMonth(),now.getDate()).toISOString().slice(0,10);
+            save(KEY_CONTRACTS, [{id:1,companyId:1,start, end: later, modules:['dashboard','vendas','produtos','estoque','relatorios']}]);
+        }
+        if(!localStorage.getItem(KEY_USERS)){
+            save(KEY_USERS, [{id:1,login:'master',pass:'123',companyId:1}]);
         }
 
-        let html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
-        html += '<thead><tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">RAZÃO / NOME</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">CNPJ</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">VIGÊNCIA</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">STATUS</th>';
-        html += '<th style="text-align:left;padding:10px;font-size:11px;font-weight:700;color:var(--text2)">AÇÕES</th></tr></thead><tbody>';
-
-        companies.forEach(comp => {
-            const status = comp.contractStatus === 'Ativo' ? '<span style="color:var(--ok)">✓ Ativo</span>' : 
-                          comp.contractStatus === 'Expirado' ? '<span style="color:var(--danger)">✗ Expirado</span>' : 
-                          '<span style="color:var(--text2)">○ Inativo</span>';
-            const range = comp.contractStart && comp.contractEnd ? `${new Date(comp.contractStart).toLocaleDateString()} – ${new Date(comp.contractEnd).toLocaleDateString()}` : '';
-            html += `<tr style="border-bottom:1px solid var(--border)">
-                <td style="padding:10px"><strong>${comp.legalName||comp.name}</strong><br><small>${comp.name||''}</small></td>
-                <td style="padding:10px;font-size:12px;color:var(--text2)">${comp.cnpj||''}</td>
-                <td style="padding:10px;font-size:12px">${range}</td>
-                <td style="padding:10px">${status}</td>
-                <td style="padding:10px">
-                    <button onclick="editCompany(${comp.id})" style="padding:4px 8px;margin-right:5px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Editar</button>
-                    <button onclick="deleteCompany(${comp.id})" style="padding:4px 8px;background:var(--danger);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px">Remover</button>
-                </td>
-            </tr>`;
-        });
-        html += '</tbody></table></div>';
-        list.innerHTML = html;
-    }
-
-    function openNewCompanyModal() {
-        document.getElementById('company-legal-name').value = '';
-        document.getElementById('company-name').value = '';
-        document.getElementById('company-cnpj').value = '';
-        document.getElementById('company-domain').value = '';
-        document.getElementById('company-admin-email').value = '';
-        document.getElementById('company-contract-start').value = '';
-        document.getElementById('company-contract-end').value = '';
-        document.getElementById('company-contract-status').value = 'Ativo';
-        // reset module checkboxes
-        document.querySelectorAll('.module-checkbox').forEach(cb=>cb.checked=false);
-        document.getElementById('company-modal').classList.add('open');
-    }
-
-    function closeCompanyModal() {
-        document.getElementById('company-modal').classList.remove('open');
-    }
-
-    function saveCompany() {
-        const legalName = document.getElementById('company-legal-name').value.trim();
-        const name = document.getElementById('company-name').value.trim();
-        const cnpj = document.getElementById('company-cnpj').value.trim();
-        const domain = document.getElementById('company-domain').value.trim().toLowerCase().replace(/\s+/g, '-');
-        const adminEmail = document.getElementById('company-admin-email').value.trim();
-        const start = document.getElementById('company-contract-start').value;
-        const end = document.getElementById('company-contract-end').value;
-        const status = document.getElementById('company-contract-status').value;
-        const modules = Array.from(document.querySelectorAll('.module-checkbox:checked')).map(cb=>cb.value);
-
-        if (!legalName || !name || !cnpj || !domain || !adminEmail || !start || !end) {
-            alert('Preencha todos os campos obrigatórios!');
-            return;
-        }
-        const startDate = new Date(start);
-        const endDate = new Date(end);
-        if (endDate <= startDate) {
-            alert('Data final deve ser posterior à data inicial');
-            return;
-        }
-
-        const newCompany = {
-            id: Date.now(),
-            legalName,
-            name,
-            cnpj,
-            domain,
-            adminEmail,
-            contractStart: start,
-            contractEnd: end,
-            contractStatus: status,
-            modules,
-            createdAt: new Date().toISOString(),
-            users: []
-        };
-
-        companies.push(newCompany);
-        localStorage.setItem('op_companies', JSON.stringify(companies));
-        renderCompanies();
-        closeCompanyModal();
-        alert('✅ Empresa criada com sucesso!');
-    }
-
-    function editCompany(id) {
-        alert('Funcionalidade de edição em desenvolvimento');
-    }
-
-    function deleteCompany(id) {
-        if (confirm('Tem certeza que deseja remover esta empresa?')) {
-            companies = companies.filter(c => c.id !== id);
-            localStorage.setItem('op_companies', JSON.stringify(companies));
-            renderCompanies();
-            alert('✅ Empresa removida');
-        }
-    }
-
-    // --- abas e utilitários adicionais ---
-    function showMasterTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
-        document.querySelectorAll('#tab-btn-clients,#tab-btn-contracts,#tab-btn-users').forEach(b=>b.classList.remove('active'));
-        if (tab==='clients') {
-            document.getElementById('tab-clients').style.display='block';
-            document.getElementById('tab-btn-clients').classList.add('active');
-        }
-        if (tab==='contracts') {
-            document.getElementById('tab-contracts').style.display='block';
-            document.getElementById('tab-btn-contracts').classList.add('active');
-            renderContracts();
-        }
-        if (tab==='users') {
-            document.getElementById('tab-users').style.display='block';
-            document.getElementById('tab-btn-users').classList.add('active');
-            renderUsers();
-        }
-    }
-
-    function renderContracts() {
-        var cont = document.getElementById('contracts-list');
-        if (!cont) return;
-        if (companies.length===0) {
-            cont.innerHTML='<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
-            return;
-        }
-        var html='';
-        companies.forEach(function(c){
-            var vig = '';
-            if (c.contractStart && c.contractEnd) {
-                vig = 'Vigência: ' + new Date(c.contractStart).toLocaleDateString() + ' – ' + new Date(c.contractEnd).toLocaleDateString() + '<br>';
-            }
-            html += '<div style="padding:8px;border-bottom:1px solid var(--border)>'
-                  +'<strong>'+escapeHtml(c.name)+'</strong><br>'
-                  +vig
-                  +'Status: '+c.contractStatus+'<br>'
-                  +'Módulos: '+escapeHtml((c.modules||[]).join(', '))
-                  +'</div>';
-        });
-        cont.innerHTML = html;
-    }
-
-    function renderUsers() {
-        var cont = document.getElementById('users-global-list');
-        if (!cont) return;
-        if (companies.length===0) {
-            cont.innerHTML='<p style="color:var(--text2);text-align:center;padding:20px">Nenhuma empresa cadastrada</p>';
-            return;
-        }
-        var html = '<div style="margin-bottom:12px">Selecione a empresa:</div>';
-        html += '<select id="user-company-select" style="padding:8px;border:1px solid var(--border);border-radius:6px">';
-        companies.forEach(function(c){ html += '<option value="'+c.id+'">'+escapeHtml(c.name)+'</option>'; });
-        html += '</select> <button class="btn btn-primary" style="margin-left:8px;" onclick="openCompanyUsers()">Gerenciar</button>';
-        cont.innerHTML = html + '<div id="company-users-area" style="margin-top:16px"></div>';
-    }
-
-    function openCompanyUsers() {
-        var sel = document.getElementById('user-company-select');
-        if (!sel) return;
-        var id = parseInt(sel.value);
-        var company = companies.find(c=>c.id===id);
-        var area = document.getElementById('company-users-area');
-        if (!company) return;
-        if (!company.users) company.users = [];
-        var html = '<div style="margin-bottom:8px"><button class="btn btn-primary" onclick="showNewUserForm('+id+')">+ Novo Usuário</button></div>';
-        if (company.users.length===0) {
-            html += '<p style="color:var(--text2)">Nenhum usuário cadastrado</p>';
-        } else {
-            html += '<ul>';
-            company.users.forEach(function(u){
-                html += '<li>'+escapeHtml(u.nome)+' ('+escapeHtml(u.login)+')</li>';
+        // Tabs
+        document.querySelectorAll('.tabs button').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+                document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.tab-panel').forEach(p=>{
+                    p.id===tab ? (p.classList.add('active'), p.setAttribute('aria-hidden','false')) : (p.classList.remove('active'), p.setAttribute('aria-hidden','true'));
+                });
+                renderAll();
             });
-            html += '</ul>';
+        });
+
+        // CLIENTS
+        function renderClients(){
+            const clients = load(KEY_CLIENTS);
+            const tbody = $('clients-tbody'); tbody.innerHTML = '';
+            clients.forEach(c=>{
+                const contracts = load(KEY_CONTRACTS).filter(ct=>ct.companyId===c.id && new Date(ct.end) >= new Date()).length;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${c.legal}<div class=\"small\">${c.name||''}</div></td>
+                                                <td>${c.cnpj}</td>
+                                                <td>${c.uf}</td>
+                                                <td>${contracts}</td>
+                                                <td class=\"actions\">
+                                                    <button data-id=\"${c.id}\" class=\"edit-client btn-small\">Editar</button>
+                                                    <button data-id=\"${c.id}\" class=\"del-client btn-small\">Remover</button>
+                                                </td>`;
+                tbody.appendChild(tr);
+            });
+            // attach actions
+            tbody.querySelectorAll('.del-client').forEach(b=>b.addEventListener('click', e=>{
+                const id=+e.target.dataset.id;
+                if(confirm('Remover cliente?')) {
+                    save(KEY_CLIENTS, load(KEY_CLIENTS).filter(x=>x.id!==id));
+                    // also remove contracts and unassign users
+                    save(KEY_CONTRACTS, load(KEY_CONTRACTS).filter(c=>c.companyId!==id));
+                    const users = load(KEY_USERS).map(u=> u.companyId===id ? {...u,companyId:null} : u);
+                    save(KEY_USERS, users);
+                    renderAll();
+                }
+            }));
+            tbody.querySelectorAll('.edit-client').forEach(b=>b.addEventListener('click', e=>{
+                const id = +e.target.dataset.id;
+                const client = clients.find(c=>c.id===id);
+                if(client){
+                    $('client-form-wrap').style.display='block';
+                    $('company-legal-name').value = client.legal;
+                    $('company-name').value = client.name;
+                    $('company-cnpj').value = client.cnpj;
+                    $('company-uf').value = client.uf;
+                    // Troca texto do botão para 'Salvar'
+                    const btn = $('client-form').querySelector('button[type="submit"]');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Salvar';
+                    $('client-form').onsubmit = function(ev){
+                        ev.preventDefault();
+                        let legal = $('company-legal-name').value.trim();
+                        let name = $('company-name').value.trim();
+                        let cnpj = $('company-cnpj').value.replace(/\D/g,'');
+                        let uf = $('company-uf').value;
+                        $('cnpj-error').style.display = 'none';
+                        if(!legal || !cnpj || !uf){ alert('Preencha os campos obrigatórios'); return; }
+                        if(cnpj.length !== 14 || !/^\d{14}$/.test(cnpj)){
+                            $('cnpj-error').textContent = 'CNPJ deve ter exatamente 14 dígitos numéricos';
+                            $('cnpj-error').style.display = 'block';
+                            return;
+                        }
+                        const all = load(KEY_CLIENTS);
+                        const idx = all.findIndex(c=>c.id===id);
+                        if(idx>-1){
+                            all[idx] = {id, legal, name, cnpj, uf};
+                            save(KEY_CLIENTS, all);
+                        }
+                        $('client-form').reset();
+                        $('client-form-wrap').style.display='none';
+                        $('cnpj-error').style.display='none';
+                        btn.textContent = originalText;
+                        $('client-form').onsubmit = null;
+                        renderAll();
+                    };
+                    // Ao cancelar, restaurar botão e onsubmit
+                    $('btn-cancel-client').onclick = function(){
+                        $('client-form-wrap').style.display='none';
+                        $('client-form').reset();
+                        $('cnpj-error').style.display='none';
+                        btn.textContent = originalText;
+                        $('client-form').onsubmit = null;
+                        $('btn-cancel-client').onclick = null;
+                    };
+                }
+            }));
         }
-        area.innerHTML = html;
-    }
 
-    function showNewUserForm(companyId) {
-        var name = prompt('Nome do usuário:');
-        var login = prompt('Login:');
-        var pass = prompt('Senha:');
-        if (name && login && pass) {
-            var comp = companies.find(c=>c.id===companyId);
-            if (!comp.users) comp.users = [];
-            comp.users.push({nome:name,login:login,senha:pass});
-            localStorage.setItem('op_companies',JSON.stringify(companies));
-            openCompanyUsers();
+        // new client form toggle
+        $('btn-new-client').addEventListener('click', ()=> $('client-form-wrap').style.display='block');
+        $('btn-cancel-client').addEventListener('click', ()=> { $('client-form-wrap').style.display='none'; $('client-form').reset(); $('cnpj-error').style.display='none'; });
+
+        $('client-form').addEventListener('submit', e=>{
+            e.preventDefault();
+            const legal = $('company-legal-name').value.trim();
+            const name = $('company-name').value.trim();
+            let cnpj = $('company-cnpj').value.replace(/\D/g,'');
+            const uf = $('company-uf').value;
+            $('cnpj-error').style.display = 'none';
+            if(!legal || !cnpj || !uf){ alert('Preencha os campos obrigatórios'); return; }
+            if(cnpj.length !== 14 || !/^\d{14}$/.test(cnpj)){
+                $('cnpj-error').textContent = 'CNPJ deve ter exatamente 14 dígitos numéricos';
+                $('cnpj-error').style.display = 'block';
+                return;
+            }
+            const clients = load(KEY_CLIENTS);
+            const id = (clients.reduce((s,o)=>Math.max(s,o.id),0)||0)+1;
+            clients.push({id, legal, name, cnpj, uf});
+            save(KEY_CLIENTS, clients);
+            $('client-form').reset();
+            $('client-form-wrap').style.display='none';
+            $('cnpj-error').style.display='none';
+            renderAll();
+        });
+
+        // CONTRACTS
+        function renderContracts(){
+            const contracts = load(KEY_CONTRACTS);
+            const tbody = $('contracts-tbody'); tbody.innerHTML = '';
+            const clients = load(KEY_CLIENTS);
+            contracts.forEach(ct=>{
+                const client = clients.find(c=>c.id===ct.companyId);
+                const status = (new Date(ct.end) < new Date()) ? 'Expirado' : 'Ativo';
+                const modules = (ct.modules||[]).join(', ');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${client?client.legal:'-'} </td>
+                                                <td>${ct.start} → ${ct.end}</td>
+                                                <td>${status}</td>
+                                                <td>${modules}</td>
+                                                <td>
+                                                    <button data-id=\"${ct.id}\" class=\"edit-contract btn-small\">Editar</button>
+                                                    <button data-id=\"${ct.id}\" class=\"del-contract btn-small\">Remover</button>
+                                                </td>`;
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('.del-contract').forEach(b=>b.addEventListener('click', e=>{
+                if(confirm('Remover contrato?')){
+                    const id = +e.target.dataset.id;
+                    save(KEY_CONTRACTS, load(KEY_CONTRACTS).filter(c=>c.id!==id));
+                    renderAll();
+                }
+            }));
+            tbody.querySelectorAll('.edit-contract').forEach(b=>b.addEventListener('click', e=>{
+                const id = +e.target.dataset.id;
+                const contracts = load(KEY_CONTRACTS);
+                const contract = contracts.find(c=>c.id===id);
+                if(contract){
+                    $('contract-form-wrap').style.display='block';
+                    $('contract-company').value = contract.companyId;
+                    $('contract-start').value = contract.start;
+                    $('contract-end').value = contract.end;
+                    document.querySelectorAll('.module-checkbox').forEach(cb=>cb.checked = (contract.modules||[]).includes(cb.value));
+                    const btn = $('contract-form').querySelector('button[type="submit"]');
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Salvar';
+                    $('contract-form').onsubmit = function(ev){
+                        ev.preventDefault();
+                        const companyId = +$('contract-company').value;
+                        const start = $('contract-start').value;
+                        const end = $('contract-end').value;
+                        if(!companyId || !start || !end){ alert('Preencha todos os campos'); return; }
+                        if(new Date(end) < new Date(start)){ alert('Data final deve ser posterior à inicial'); return; }
+                        const modules = Array.from(document.querySelectorAll('.module-checkbox:checked')).map(i=>i.value);
+                        const all = load(KEY_CONTRACTS);
+                        const idx = all.findIndex(c=>c.id===id);
+                        if(idx>-1){
+                            all[idx] = {id, companyId, start, end, modules};
+                            save(KEY_CONTRACTS, all);
+                        }
+                        $('contract-form').reset();
+                        $('contract-form-wrap').style.display='none';
+                        btn.textContent = originalText;
+                        $('contract-form').onsubmit = null;
+                        renderAll();
+                    };
+                    $('btn-cancel-contract').onclick = function(){
+                        $('contract-form-wrap').style.display='none';
+                        $('contract-form').reset();
+                        btn.textContent = originalText;
+                        $('contract-form').onsubmit = null;
+                        $('btn-cancel-contract').onclick = null;
+                    };
+                }
+            }));
         }
-    }
 
-    // exibir aba inicial
-    showMasterTab('clients');
+        $('btn-new-contract').addEventListener('click', ()=>{
+            populateCompanySelects();
+            $('contract-form-wrap').style.display='block';
+        });
+        $('btn-cancel-contract').addEventListener('click', ()=>{ $('contract-form-wrap').style.display='none'; $('contract-form').reset(); });
 
-    // Verifica se há login ao carregar
-    window.addEventListener('DOMContentLoaded', () => {
-        const user = sessionStorage.getItem('masterUser');
-        if (user) {
-            masterCurrentUser = JSON.parse(user);
-            document.getElementById('login-view').style.display = 'none';
-            document.getElementById('master-view').classList.add('active');
-            renderCompanies();
+        function populateCompanySelects(){
+            const clients = load(KEY_CLIENTS);
+            const sel = $('contract-company'); sel.innerHTML = '<option value=\"\">Selecione</option>';
+            const sel2 = $('user-company'); sel2.innerHTML = '<option value=\"\">Selecione</option>';
+            clients.forEach(c=>{
+                const opt = document.createElement('option'); opt.value = c.id; opt.textContent = `${c.legal} (${c.cnpj})`;
+                sel.appendChild(opt);
+                const opt2 = opt.cloneNode(true);
+                sel2.appendChild(opt2);
+            });
         }
-    });
-</script>
 
+        $('contract-form').addEventListener('submit', e=>{
+            e.preventDefault();
+            const companyId = +$('contract-company').value;
+            const start = $('contract-start').value;
+            const end = $('contract-end').value;
+            if(!companyId || !start || !end){ alert('Preencha todos os campos'); return; }
+            if(new Date(end) < new Date(start)){ alert('Data final deve ser posterior à inicial'); return; }
+            const modules = Array.from(document.querySelectorAll('.module-checkbox:checked')).map(i=>i.value);
+            const contracts = load(KEY_CONTRACTS);
+            const id = (contracts.reduce((s,o)=>Math.max(s,o.id),0)||0)+1;
+            contracts.push({id, companyId, start, end, modules});
+            save(KEY_CONTRACTS, contracts);
+            $('contract-form').reset();
+            $('contract-form-wrap').style.display='none';
+            renderAll();
+        });
+
+        // USERS
+        function renderUsers(){
+            const users = load(KEY_USERS);
+            const tbody = $('users-tbody'); tbody.innerHTML='';
+            const clients = load(KEY_CLIENTS);
+            users.forEach(u=>{
+                const companyName = clients.find(c=>c.id===u.companyId)?.legal || '-';
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${u.login}</td><td>${companyName}</td><td>
+                    <button data-id=\"${u.id}\" class=\"edit-user btn-small\">Editar</button>
+                    <button data-id=\"${u.id}\" class=\"del-user btn-small\">Remover</button>
+                </td>`;
+                tbody.appendChild(tr);
+            });
+            tbody.querySelectorAll('.del-user').forEach(b=>b.addEventListener('click', e=>{
+                if(confirm('Remover usuário?')) {
+                    save(KEY_USERS, load(KEY_USERS).filter(u=>u.id!==+e.target.dataset.id));
+                    renderAll();
+                }
+            }));
+            tbody.querySelectorAll('.edit-user').forEach(b=>b.addEventListener('click', e=>{
+                const id = +e.target.dataset.id;
+                const users = load(KEY_USERS);
+                const user = users.find(u=>u.id===id);
+                if(user){
+                    const btn = $('user-form').querySelector('button[type="submit"]');
+                    editingUserId = id;
+                    $('user-login').value = user.login;
+                    $('user-pass').value = user.pass;
+                    $('user-company').value = user.companyId;
+                    btn.textContent = 'Salvar usuário';
+                    $('btn-cancel-user').style.display = 'inline-block';
+                }
+            }));
+        }
+
+        $('btn-cancel-user').addEventListener('click', ()=>{
+            editingUserId = null;
+            $('user-form').reset();
+            $('user-form').querySelector('button[type="submit"]').textContent = 'Criar usuário';
+            $('btn-cancel-user').style.display = 'none';
+        });
+
+        $('user-form').addEventListener('submit', e=>{
+            e.preventDefault();
+            const login = $('user-login').value.trim();
+            const pass = $('user-pass').value;
+            const companyId = parseInt($('user-company').value);
+            if(!login || !pass || !companyId){ alert('Preencha todos os campos'); return; }
+            const users = load(KEY_USERS);
+            if(editingUserId !== null){
+                if(users.some(u=>u.login===login && u.id!==editingUserId)){ alert('Usuário já existe'); return; }
+                const idx = users.findIndex(u=>u.id===editingUserId);
+                if(idx>-1){
+                    users[idx] = {id: editingUserId, login, pass, companyId};
+                }
+                editingUserId = null;
+                $('user-form').querySelector('button[type="submit"]').textContent = 'Criar usuário';
+                $('btn-cancel-user').style.display = 'none';
+            } else {
+                if(users.some(u=>u.login===login)){ alert('Usuário já existe'); return; }
+                const id = (users.reduce((s,o)=>Math.max(s,o.id),0)||0)+1;
+                users.push({id, login, pass, companyId});
+            }
+            save(KEY_USERS, users);
+            $('user-form').reset();
+            renderAll();
+        });
+
+        function renderAll(){
+            renderClients();
+            renderContracts();
+            renderUsers();
+            populateCompanySelects();
+        }
+
+        function logoutMaster(){
+            localStorage.removeItem('op_session_user');
+            localStorage.removeItem('op_session_time');
+            localStorage.removeItem('op_portal_session');
+            window.location.href = 'index.html';
+        }
+
+        // initial render
+        renderAll();
+    </script>
 </body>
 </html>

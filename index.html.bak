@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OutletPro - Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root[data-theme="dark"] { --bg:#09090e; --card:#111119; --text:#eeeef5; --text2:#7777aa; --border:rgba(255,255,255,0.07); --accent:#7c6dff; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;justify-content:center;align-items:center}
+    .login-card{background:var(--card);padding:40px;border-radius:20px;width:100%;max-width:400px;border:1px solid var(--border);box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center}
+    .login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;background:linear-gradient(135deg,var(--accent),#ff6b9d);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+    .login-form{display:flex;flex-direction:column;gap:16px}
+    input{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:12px 14px;font-size:13px;color:var(--text);outline:none;transition:border-color .18s;width:100%}
+    input:focus{border-color:var(--accent)}
+    input::placeholder{color:var(--text2)}
+    button{background:linear-gradient(135deg,var(--accent),#9d6dff);color:#fff;border:none;border-radius:9px;padding:12px;font-weight:600;cursor:pointer;transition:all .18s;width:100%}
+    button:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(124,109,255,.45)}
+    .error{color:#ff5272;font-size:12px;margin-top:14px;display:none;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">OutletPro</div>
+    <div class="login-form">
+      <input type="text" id="log-user" placeholder="Usuário" autocomplete="username">
+      <input type="password" id="log-pass" placeholder="Senha" autocomplete="current-password" onkeyup="if(event.key==='Enter') doLogin()">
+      <button onclick="doLogin()">Entrar</button>
+    </div>
+    <div class="error" id="log-err">Usuário ou senha incorretos.</div>
+  </div>
+  <script>
+    function doLogin() {
+      var user = document.getElementById('log-user').value.trim();
+      var pass = document.getElementById('log-pass').value.trim();
+      var err = document.getElementById('log-err');
+      err.style.display = 'none';
+      if (!user || !pass) {
+        err.textContent = 'Preencha usuário e senha';
+        err.style.display = 'block';
+        return;
+      }
+      // master takes priority
+      if (user === 'master' && pass === '123') {
+        localStorage.setItem('op_portal_session', JSON.stringify({ user: user, role: 'master', at: Date.now() }));
+        window.location.href = 'master.html';
+        return;
+      }
+      // Busca usuários dinâmicos do localStorage
+      try {
+        var users = JSON.parse(localStorage.getItem('op_users') || '[]');
+        var found = users.find(u => u.login === user && u.pass === pass);
+        if (found) {
+          localStorage.setItem('op_portal_session', JSON.stringify({ user: user, role: 'tenant', at: Date.now() }));
+          window.location.href = 'outlet-system_3.html';
+          return;
+        }
+      } catch (e) {}
+      err.textContent = 'Usuário ou senha incorretos';
+      err.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

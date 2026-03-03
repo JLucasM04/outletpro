@@ -8,7 +8,6 @@ Write-Host "══════════════════════�
 Write-Host ""
 
 $folder = "c:\Users\joaol\Music\outletpro"
-cd $folder
 
 # 1. Tentar Python (mais comum)
 Write-Host "🔍 Procurando por Python..." -ForegroundColor Yellow
@@ -57,7 +56,7 @@ if ($python) {
     Write-Host ""
     Write-Host "Pressione Ctrl+C para parar o servidor" -ForegroundColor Gray
     Write-Host ""
-    & $python -m http.server 8000
+    & $python -m http.server 8000 --directory $folder
 } 
 elseif ($nodejs) {
     Write-Host "Usando Node.js Server" -ForegroundColor Green
@@ -67,7 +66,7 @@ elseif ($nodejs) {
     Write-Host ""
     Write-Host "Pressione Ctrl+C para parar o servidor" -ForegroundColor Gray
     Write-Host ""
-    & node server-simple.js
+    & node "$folder\server-simple.js"
 }
 else {
     Write-Host ""
