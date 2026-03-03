@@ -206,8 +206,8 @@
             
             <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label class="form-label">👤 Usuário</label>
-                    <input type="text" id="username" placeholder="Digite seu usuário" required autocomplete="username">
+                    <label class="form-label">� Email</label>
+                    <input type="email" id="username" placeholder="Digite seu e-mail" required autocomplete="email">
                 </div>
                 
                 <div class="form-group">
@@ -256,81 +256,44 @@
         }
         
         function performLogin(user, pass, errorMsg, loading) {
-            try {
-                // Carregar usuários do localStorage
-                var users = JSON.parse(localStorage.getItem('op_users')) || DEFAULT_USERS;
-                
-                console.log('[LOGIN] Tentando logar como:', user);
-                console.log('[LOGIN] Usuários disponíveis:', users.length);
-                
-                // Procurar usuário (compatível com formatos: user/senha e login/pass)
-                var foundUser = users.find(function (u) {
-                    var username = u.user || u.login;
-                    var password = u.senha || u.pass;
-                    var status = u.status || 'Ativo';
-                    return username === user && password === pass && status === 'Ativo';
-                });
-                
-                if (!foundUser) {
-                    console.error('[LOGIN] Usuário não encontrado ou inativo');
-                    showError('Usuário ou senha incorretos');
-                    loading.style.display = 'none';
-                    return;
+            // Chamar API de autenticação
+            fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user, password: pass })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Credenciais inválidas');
                 }
+                return response.json();
+            })
+            .then(data => {
+                console.log('[LOGIN] Autenticação bem-sucedida:', data.user.nome);
                 
-                var normalizedUsername = foundUser.user || foundUser.login;
-                var normalizedPassword = foundUser.senha || foundUser.pass;
-                var normalizedCompanyId = foundUser.company_id || foundUser.companyId || null;
-                var userType = foundUser.type || (normalizedUsername === 'master' ? 'master' : 'admin');
-                var sellers = JSON.parse(localStorage.getItem('op_sellers')) || [];
-                var linkedSeller = sellers.find(function (s) {
-                    var sellerUser = s.user || s.login;
-                    return sellerUser === normalizedUsername && String(s.company_id || '') === String(normalizedCompanyId || '');
-                }) || null;
-
-                var resolvedSellerId = foundUser.seller_id || foundUser.sellerId || (linkedSeller ? linkedSeller.id : null);
-                var resolvedPermissions = Array.isArray(foundUser.permissions) && foundUser.permissions.length > 0
-                    ? foundUser.permissions
-                    : (Array.isArray(linkedSeller?.permissions) ? linkedSeller.permissions : []);
-
-                var sessionUser = {
-                    id: foundUser.id,
-                    nome: foundUser.nome || normalizedUsername,
-                    user: normalizedUsername,
-                    senha: normalizedPassword,
-                    email: foundUser.email || '',
-                    company_id: normalizedCompanyId,
-                    companyId: normalizedCompanyId,
-                    seller_id: resolvedSellerId,
-                    sellerId: resolvedSellerId,
-                    permissions: resolvedPermissions,
-                    type: userType,
-                    status: foundUser.status || 'Ativo'
-                };
-
-                console.log('[LOGIN] Autenticação bem-sucedida:', sessionUser.nome, '| Tipo:', userType);
+                // Salvar token JWT
+                localStorage.setItem('token', data.token);
                 
-                // Salvar sessão
-                localStorage.setItem('op_session_user', JSON.stringify(sessionUser));
-                localStorage.setItem('op_session_time', new Date().getTime());
+                // Salvar dados do usuário em localStorage para referência rápida
+                localStorage.setItem('op_session_user', JSON.stringify(data.user));
                 localStorage.setItem('op_portal_session', JSON.stringify({
-                    user: sessionUser.user,
-                    role: userType,
+                    user: data.user.user,
+                    role: data.user.type,
                     at: Date.now()
                 }));
                 
-                // Redirecionar
-                if (userType === 'master') {
+                // Redirecionar baseado no tipo de usuário
+                if (data.user.type === 'master') {
                     window.location.href = 'master.html';
                 } else {
                     window.location.href = 'outlet-system_3.html';
                 }
-                
-            } catch (e) {
-                console.error('[LOGIN] Erro:', e.message);
-                showError('Erro ao processar login');
+            })
+            .catch(error => {
+                console.error('[LOGIN]', error.message);
+                showError('Erro ao processar login: ' + error.message);
                 loading.style.display = 'none';
-            }
+            });
         }
         
         function showError(msg) {
