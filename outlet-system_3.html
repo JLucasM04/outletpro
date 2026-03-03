@@ -1196,12 +1196,9 @@
     });
 
     function initSystem() {
-        // Garantir dados padrão
+        // Usuários são carregados do servidor via API - sem credenciais hardcoded
         if (!localStorage.getItem('op_users')) {
-            localStorage.setItem('op_users', JSON.stringify([
-                { id: 0, nome: 'Master Admin', user: 'master', senha: '123', email: 'master@outletpro.com', type: 'master', status: 'Ativo' },
-                { id: 1, nome: 'Admin Empresa', user: 'admin', senha: '123', email: 'admin@outletpro.com', company_id: 1, type: 'admin', status: 'Ativo' }
-            ]));
+            localStorage.setItem('op_users', JSON.stringify([]));
         }
         if (!localStorage.getItem('op_companies')) localStorage.setItem('op_companies', JSON.stringify([]));
         if (!localStorage.getItem('op_sellers')) localStorage.setItem('op_sellers', JSON.stringify([]));

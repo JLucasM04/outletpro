@@ -224,19 +224,13 @@
             </div>
             
             <div class="login-footer">
-                <div style="margin-top: 16px;">Credenciais de teste:</div>
-                <div style="margin-top: 8px;">Master: <strong>master / 123</strong></div>
-                <div>Admin: <strong>admin / 123</strong></div>
+                <!-- Credenciais gerenciadas pelo servidor - veja documentação -->
             </div>
         </div>
     </div>
     
     <script>
-        // Dados padrão do sistema
-        var DEFAULT_USERS = [
-            { id: 0, nome: 'Master Admin', user: 'master', senha: '123', email: 'master@outletpro.com', type: 'master', status: 'Ativo' },
-            { id: 1, nome: 'Admin Empresa', user: 'admin', senha: '123', email: 'admin@outletpro.com', company_id: 1, type: 'admin', status: 'Ativo' }
-        ];
+        // Usuários carregados do servidor - sem credenciais hardcoded
         
         function handleLogin(event) {
             event.preventDefault();
