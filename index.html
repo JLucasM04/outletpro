@@ -274,32 +274,54 @@
         
         function performLogin(user, pass, errorMsg, loading) {
             // Chamar API de autenticação
-            console.log('[LOGIN API] Tentando logar com email:', user);
+            const loginData = { email: user, password: pass };
+            const url = '/api/login';
+            const method = 'POST';
             
-            fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: user, password: pass })
+            console.log('[LOGIN] Iniciando login...');
+            console.log('[LOGIN] URL:', url);
+            console.log('[LOGIN] Method:', method);
+            console.log('[LOGIN] Data:', loginData);
+            
+            fetch(url, {
+                method: method,
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(loginData)
             })
             .then(response => {
-                console.log('[LOGIN API] Status recebido:', response.status);
-                console.log('[LOGIN API] Headers:', response.headers);
+                console.log('[LOGIN] Response recebida:');
+                console.log('  Status:', response.status);
+                console.log('  StatusText:', response.statusText);
+                console.log('  Content-Type:', response.headers.get('Content-Type'));
+                console.log('  URL:', response.url);
                 
-                return response.json().then(data => {
+                return response.text().then(text => {
+                    console.log('[LOGIN] Response Body (primeiros 200 chars):', text.substring(0, 200));
+                    
                     if (!response.ok) {
-                        console.error('[LOGIN API] Response não OK:', data);
-                        throw new Error(data.error || 'Credenciais inválidas');
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     }
-                    return data;
+                    
+                    // Se chegou aqui, tentar fazer JSON parse
+                    try {
+                        const data = JSON.parse(text);
+                        return data;
+                    } catch (e) {
+                        console.error('[LOGIN] Erro ao fazer JSON.parse:');
+                        console.error('  Text recebido:', text.substring(0, 300));
+                        throw new Error(`JSON parse error: ${e.message}`);
+                    }
                 });
             })
             .then(data => {
-                console.log('[LOGIN] Sucesso! Usuário:', data.user);
+                console.log('[LOGIN] ✓ Autenticação bem-sucedida!');
+                console.log('[LOGIN] Usuário:', data.user);
                 
                 // Salvar token JWT
                 localStorage.setItem('token', data.token);
-                
-                // Salvar dados do usuário em localStorage para referência rápida
                 localStorage.setItem('op_session_user', JSON.stringify(data.user));
                 localStorage.setItem('op_portal_session', JSON.stringify({
                     user: data.user.user,
@@ -309,7 +331,6 @@
                 
                 console.log('[LOGIN] Redirecionando para:', data.user.type === 'master' ? 'master.html' : 'outlet-system_3.html');
                 
-                // Redirecionar baseado no tipo de usuário
                 if (data.user.type === 'master') {
                     window.location.href = 'master.html';
                 } else {
@@ -317,7 +338,8 @@
                 }
             })
             .catch(error => {
-                console.error('[LOGIN ERROR]', error);
+                console.error('[LOGIN] ✗ ERRO:', error);
+                console.error('[LOGIN] Stack:', error.stack);
                 showError('Erro ao processar login: ' + error.message);
                 loading.style.display = 'none';
             });
