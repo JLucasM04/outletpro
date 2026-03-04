@@ -14,12 +14,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(bodyParser.json());
 
-// Servir arquivos estáticos da pasta raiz
-app.use(express.static(path.join(__dirname, '..')));
-
-const JWT_SECRET = process.env.JWT_SECRET || 'change-me';
-const PORT = Number(process.env.PORT || 3000);
-
+// CORS middleware primeiro
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -29,6 +24,9 @@ app.use((req, res, next) => {
   }
   return next();
 });
+
+const JWT_SECRET = process.env.JWT_SECRET || 'change-me';
+const PORT = Number(process.env.PORT || 3000);
 
 function normalizeModules(inputModules) {
   if (!Array.isArray(inputModules)) return [];
@@ -463,6 +461,9 @@ app.get('/api/vendas', requireAuth, async (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
+
+// Servir arquivos estáticos DEPOIS de todas as rotas da API
+app.use(express.static(path.join(__dirname, '..')));
 
 app.listen(PORT, async () => {
   await initDb();
