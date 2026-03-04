@@ -230,6 +230,23 @@
     </div>
     
     <script>
+        // Limpar localStorage antigo no carregamento
+        console.log('[INIT] Limpando localStorage...');
+        const keysToRemove = ['op_users', 'op_session_time', 'op_companies', 'op_sellers', 'op_produtos', 'op_vendas', 'op_notas'];
+        keysToRemove.forEach(key => {
+            const hadKey = localStorage.getItem(key);
+            if (hadKey) {
+                localStorage.removeItem(key);
+                console.log('[INIT] Removido:', key);
+            }
+        });
+        
+        // Manter apenas token, session user, e portal session
+        // Todos os outros dados virão da API
+        console.log('[INIT] localStorage limpo. Pronto para novo login.');
+    </script>
+
+    <script>
         // Usuários carregados do servidor - sem credenciais hardcoded
         
         function handleLogin(event) {
@@ -257,19 +274,27 @@
         
         function performLogin(user, pass, errorMsg, loading) {
             // Chamar API de autenticação
+            console.log('[LOGIN API] Tentando logar com email:', user);
+            
             fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: user, password: pass })
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Credenciais inválidas');
-                }
-                return response.json();
+                console.log('[LOGIN API] Status recebido:', response.status);
+                console.log('[LOGIN API] Headers:', response.headers);
+                
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        console.error('[LOGIN API] Response não OK:', data);
+                        throw new Error(data.error || 'Credenciais inválidas');
+                    }
+                    return data;
+                });
             })
             .then(data => {
-                console.log('[LOGIN] Autenticação bem-sucedida:', data.user.nome);
+                console.log('[LOGIN] Sucesso! Usuário:', data.user);
                 
                 // Salvar token JWT
                 localStorage.setItem('token', data.token);
@@ -282,6 +307,8 @@
                     at: Date.now()
                 }));
                 
+                console.log('[LOGIN] Redirecionando para:', data.user.type === 'master' ? 'master.html' : 'outlet-system_3.html');
+                
                 // Redirecionar baseado no tipo de usuário
                 if (data.user.type === 'master') {
                     window.location.href = 'master.html';
@@ -290,7 +317,7 @@
                 }
             })
             .catch(error => {
-                console.error('[LOGIN]', error.message);
+                console.error('[LOGIN ERROR]', error);
                 showError('Erro ao processar login: ' + error.message);
                 loading.style.display = 'none';
             });
@@ -302,33 +329,25 @@
             errorMsg.style.display = 'block';
         }
         
-        // Verificar se já está logado
+        // Verificar se já está logado (se houver dados válidos em localStorage)
         window.addEventListener('load', function() {
-            var portalSession = localStorage.getItem('op_portal_session');
-            if (portalSession) {
+            const token = localStorage.getItem('token');
+            const portalSession = localStorage.getItem('op_portal_session');
+            
+            if (token && portalSession) {
                 try {
-                    var p = JSON.parse(portalSession);
-                    if (p && p.role === 'master') {
+                    const session = JSON.parse(portalSession);
+                    if (session?.role === 'master') {
                         window.location.href = 'master.html';
                         return;
                     }
-                    if (p && p.user) {
+                    if (session?.user) {
                         window.location.href = 'outlet-system_3.html';
                         return;
                     }
-                } catch (e) {}
-            }
-            var sessionUser = localStorage.getItem('op_session_user');
-            if (sessionUser) {
-                try {
-                    var user = JSON.parse(sessionUser);
-                    var role = user.type || ((user.user || user.login) === 'master' ? 'master' : 'tenant');
-                    if (role === 'master') {
-                        window.location.href = 'master.html';
-                    } else {
-                        window.location.href = 'outlet-system_3.html';
-                    }
-                } catch (e) {}
+                } catch (e) {
+                    console.warn('Session inválida', e);
+                }
             }
         });
     </script>
