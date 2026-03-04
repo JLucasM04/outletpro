@@ -1,0 +1,23 @@
+[Unit]
+Description=OutletPro API Server
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/outletpro/server
+ExecStart=/usr/bin/node index.js
+Restart=always
+RestartSec=10
+
+# Limites de recursos
+MemoryLimit=512M
+CPUQuota=50%
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=outletpro
+
+[Install]
+WantedBy=multi-user.target

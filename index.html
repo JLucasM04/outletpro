@@ -275,7 +275,13 @@
         function performLogin(user, pass, errorMsg, loading) {
             // Chamar API de autenticação
             const loginData = { email: user, password: pass };
-            const url = '/api/login';
+            
+            // Detectar URL da API automaticamente
+            const API_BASE = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000'
+                : window.location.protocol + '//' + window.location.hostname + ':3000';
+            
+            const url = API_BASE + '/api/login';
             const method = 'POST';
             
             console.log('[LOGIN] Iniciando login...');
